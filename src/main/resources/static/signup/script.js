@@ -34,13 +34,15 @@ function signup() {
                 alert("Email already exists");
             } else if (xhr.responseText === "USERNAME_EXISTS") {
                 alert("Username already exists");
-            } else {
+            } else if (xhr.responseText === "") {
                 verificationCode = xhr.responseText;
                 alert("Verification code sent to your email. Please enter it below.");
                 document.getElementById("verificationCode").setAttribute("disabled", false);
                 document.getElementById("verificationCode").setAttribute("placeholder", "Enter verification code");
                 document.getElementById("verificationCode").setAttribute("required", true);
                 setTimeout(resetVerificationCode, 5 * 60 * 1000);
+            } else {
+                alert("Signup failed: " + xhr.responseText);
             }
         } else {
             alert("Signup failed: " + xhr.responseText);

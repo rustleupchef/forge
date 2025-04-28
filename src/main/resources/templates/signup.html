@@ -10,13 +10,14 @@
     <body>
         <img src="images/logo.png" alt="logo">
 
-        <div>
+        <div id="signupForm">
+            <h2>Sign Up</h2>
             <input type="email" id="email" placeholder="Email" required>
             <input type="password" id="password" placeholder="Password" required>
             <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
             <input type="text" id="username" placeholder="Username" required>
             <input type="number" id="verificationCode" placeholder="Verification Code" required disabled>
-            <button id="submit" onclick="signup()">Sign Up</button>
+            <button id="submit" onclick="signup()">Send Verification Code</button>
         </div>
 
         <h4>Already have an account?</h4>

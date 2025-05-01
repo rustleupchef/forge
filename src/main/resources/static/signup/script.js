@@ -11,29 +11,29 @@ function resetVerificationCode() {
 
 function signup() {
     const xhr = new XMLHttpRequest();
-    const password = document.getElementById("password").value;
+    const password = encodeURIComponent(document.getElementById("password").value);
     if (password.length < 8) {
         alert("Password must be at least 8 characters long");
         return;
     }
 
-    const confirmPassword = document.getElementById("confirmPassword").value;
+    const confirmPassword = encodeURIComponent(document.getElementById("confirmPassword").value);
     if (password !== confirmPassword) {
         alert("Passwords do not match");
         return;
     }
-    const email = document.getElementById("email").value;
+    const email = encodeURIComponent(document.getElementById("email").value);
     if (email.length < 5 || !email.includes("@")) {
         alert("Invalid email address");
         return;
     }
-    const username = document.getElementById("username").value;
+    const username = encodeURIComponent(document.getElementById("username").value);
     if (username.length < 3) {
         alert("Username must be at least 3 characters long");
         return;
     }
 
-    const enteredVerificationCode = document.getElementById("verificationCode").value;
+    const enteredVerificationCode = encodeURIComponent(document.getElementById("verificationCode").value);
     if (verificationCode !== enteredVerificationCode && verificationCode !== null) {
         alert("Invalid verification code");
         return;

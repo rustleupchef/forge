@@ -67,4 +67,18 @@ public class ForgeController {
     private void sendVerificationCode(String email, int code) {
         System.out.println("Sending verification code " + code + " to " + email);
     }
+
+    @PostMapping("/login")
+    @ResponseBody public String loginPost(
+        @Param("email") String email,
+        @Param("password") String password) {
+        Customer customer = customerService.findCustomerByEmail(email);
+        if (customer == null) {
+            return "EMAIL_NOT_FOUND";
+        }
+        if (!customer.getPassword().equals(password)) {
+            return "INVALID_PASSWORD";
+        }
+        return "OK";
+    }
 }

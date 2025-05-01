@@ -1,0 +1,73 @@
+body {
+    font-family: 'Canva Sans', sans-serif;
+}
+
+img {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    left: 1%;
+    top: 1%;
+}
+
+#loginForm {
+    position: absolute;
+    width: 30%;
+    height: 50%;
+    left: 35%;
+    top: 25%;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+#loginForm h2 {
+    text-align: center;
+    color: #a6a6a6;
+}
+
+input, button {
+    position: absolute;
+    left: 20%;
+    top: 20%;
+    width: 60%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#email {
+    top: 20%;
+}
+
+#password {
+    top: 30%;
+}
+
+#submit {
+    top: 40%;
+    width: 63.5%;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    
+}
+
+#submit:hover {
+    background-color: #45a049;
+}
+
+h4 {
+    position: absolute;
+    left: 35%;
+    top: 77.5%;
+    color: #a6a6a6;
+}
+
+a {
+    position: absolute;
+    right: 35%;
+    top: 80%;
+}

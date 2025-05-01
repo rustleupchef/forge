@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.password4j.Password;
+
 @Controller
 public class ForgeController {
 
@@ -60,7 +62,7 @@ public class ForgeController {
             return String.valueOf(num);
         }
 
-        customerService.saveCustomer(new Customer(username, email, password));
+        customerService.saveCustomer(new Customer(username, email, Password.hash(password).withBcrypt().getResult()));
         return "OK";
     }
 
@@ -75,7 +77,7 @@ public class ForgeController {
         Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null)
             return "EMAIL_NOT_FOUND";
-        if (!customer.getPassword().equals(password))
+        if (!Password.check(password, customer.getPassword()).withBcrypt())
             return "INVALID_PASSWORD";
         return "OK";
     }

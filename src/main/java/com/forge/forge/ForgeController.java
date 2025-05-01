@@ -73,12 +73,10 @@ public class ForgeController {
         @Param("email") String email,
         @Param("password") String password) {
         Customer customer = customerService.findCustomerByEmail(email);
-        if (customer == null) {
+        if (customer == null)
             return "EMAIL_NOT_FOUND";
-        }
-        if (!customer.getPassword().equals(password)) {
+        if (!customer.getPassword().equals(password))
             return "INVALID_PASSWORD";
-        }
         return "OK";
     }
 }

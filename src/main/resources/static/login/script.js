@@ -6,7 +6,7 @@ function login() {
     xhr.open("POST", "/login?email=" + email, + "&password=" + password, true);
     xhr.onload = function () {
         if (xhr.status === 200 & xhr.readyState === 4) {
-            if (xhr.responseText === "success") {
+            if (xhr.responseText === "OK") {
                 window.location.href = "/home";
             }
             else if (xhr.responseText.length > 0) {

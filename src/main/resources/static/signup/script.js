@@ -7,6 +7,7 @@ function resetVerificationCode() {
     document.getElementById("verificationCode").setAttribute("required", "required");
     document.getElementById("verificationCode").value = "";
     document.getElementById("email").value = "";
+    document.getElementById("submit").value = "Send Verification Code";
 }
 
 function signup() {
@@ -23,7 +24,7 @@ function signup() {
         return;
     }
     const email = encodeURIComponent(document.getElementById("email").value);
-    if (email.length < 5 || !email.includes("@")) {
+    if (email.length < 5 || !document.getElementById("email").value.includes("@")) {
         alert("Invalid email address");
         return;
     }
@@ -58,6 +59,7 @@ function signup() {
                 document.getElementById("verificationCode").removeAttribute("disabled");
                 document.getElementById("verificationCode").setAttribute("placeholder", "Enter verification code");
                 document.getElementById("verificationCode").setAttribute("required", true);
+                document.getElementById("submit").innerHTML = "Submit";
                 setTimeout(resetVerificationCode, 5 * 60 * 1000);
             }
         } else {

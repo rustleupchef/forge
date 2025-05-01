@@ -8,6 +8,20 @@
         <link rel="stylesheet" href="home/style.css">
     </head>
     <body>
-        
+        <img src="images/logo.png" alt="logo">
+        <div id="tabs">
+            <button id="homeTab" class="tab" onclick="showTab('home')">Home</button>
+            <button id="profileTab" class="tab" onclick="showTab('profile')">Profile</button>
+            <button id="settingsTab" class="tab" onclick="showTab('settings')">Settings</button>
+            <button id="logoutTab" class="tab" onclick="logout()">Logout</button>
+        </div>
+
+        <div id="Projects">
+            <h2>Projects</h2>
+            <div id="projectList">
+                <!-- Project list will be populated here -->
+            </div>
+            <button id="createProjectButton" onclick="createProject()">Create New Project</button>
+        </div>
     </body>
 </html>

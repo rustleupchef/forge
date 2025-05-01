@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 public class ForgeController {
 
@@ -22,7 +24,10 @@ public class ForgeController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "login";
+        }
         return "home";
     }
 
@@ -32,18 +37,24 @@ public class ForgeController {
     }
 
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(HttpSession session) {
+        if (session.getAttribute("user") != null) {
+            return "redirect:/home";
+        }
         return "signup";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(HttpSession session) {
+        if (session.getAttribute("user") != null) {
+            return "redirect:/home";
+        }
         return "login";
     }
 
     @GetMapping("/about")
     public String about() {
-        return "about";
+        return "redirect:/home";
     }
 
     @PostMapping("/signup")

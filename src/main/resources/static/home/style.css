@@ -5,3 +5,28 @@ img {
     left: 1%;
     top: 1%;
 }
+
+#tabs {
+    position: absolute;
+    width: 20%;
+    height: 80%;
+    left: 1%;
+    top: 15%;
+}
+
+#Projects {
+    position: absolute;
+    width: 70%;
+    height: 65%;
+    left: 25%;
+    top: 15%;
+    overflow: scroll;
+}
+
+#createProjectButton {
+    position: absolute;
+    width: 20%;
+    height: 10%;
+    left: 25%;
+    top: 85%;
+}

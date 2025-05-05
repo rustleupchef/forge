@@ -26,7 +26,7 @@ public class ForgeController {
     @GetMapping("/home")
     public String home(HttpSession session) {
         if (session.getAttribute("user") == null) {
-            return "login";
+            return "redirect:/login";
         }
         return "home";
     }
@@ -84,12 +84,14 @@ public class ForgeController {
     @PostMapping("/login")
     @ResponseBody public String loginPost(
         @Param("email") String email,
-        @Param("password") String password) {
+        @Param("password") String password,
+        HttpSession session) {
         Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null)
             return "EMAIL_NOT_FOUND";
         if (!Password.check(password, customer.getPassword()).withBcrypt())
             return "INVALID_PASSWORD";
+        session.setAttribute("user", customer);
         return "OK";
     }
 }

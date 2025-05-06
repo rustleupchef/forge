@@ -95,6 +95,12 @@ public class ForgeController {
     }
 
     private void sendVerificationCode(String email, int code) throws IOException {
+        String subject = "Verification Code";
+        String body = "Your verification code is: " + code;
+        sendEmail(email, subject, body);
+    }
+
+    private void sendEmail(String email, String subject, String body) throws IOException {
         Scanner smtpScanner = new Scanner(new File("smtp"));
         String password = smtpScanner.nextLine();
         smtpScanner.close();
@@ -115,8 +121,8 @@ public class ForgeController {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(sEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            message.setSubject("Verification Code");
-            message.setText("Your verification code is: " + code);
+            message.setSubject(subject);
+            message.setText(body);
             Transport.send(message);
         } catch (Exception e) {
             e.printStackTrace();

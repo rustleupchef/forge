@@ -1,6 +1,19 @@
 package com.forge.forge;
 
+import java.util.Properties;
 import java.util.Random;
+import java.util.Scanner;
+
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -16,10 +29,14 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class ForgeController {
 
+    private final String sEmail = "code.forge.site@gmail.com";
+
     private final CustomerService customerService;
+    private final ReposService reposService;
 
     @Autowired
-    public ForgeController(CustomerService customerService) {
+    public ForgeController(CustomerService customerService, ReposService reposService) {
+        this.reposService = reposService;
         this.customerService = customerService;
     }
 
@@ -62,7 +79,7 @@ public class ForgeController {
         @Param("email") String email,
         @Param("username") String username,
         @Param("password") String password,
-        @Param("verificationCode") String verificationCode) {
+        @Param("verificationCode") String verificationCode) throws IOException {
         if (customerService.findCustomerByEmail(email) != null) {
             return "EMAIL_EXISTS";
         }
@@ -77,8 +94,33 @@ public class ForgeController {
         return "OK";
     }
 
-    private void sendVerificationCode(String email, int code) {
-        System.out.println("Sending verification code " + code + " to " + email);
+    private void sendVerificationCode(String email, int code) throws IOException {
+        Scanner smtpScanner = new Scanner(new File("smtp"));
+        String password = smtpScanner.nextLine();
+        smtpScanner.close();
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(sEmail, password);
+            }
+        });
+
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(sEmail));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Verification Code");
+            message.setText("Your verification code is: " + code);
+            Transport.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @PostMapping("/login")

@@ -6,9 +6,11 @@ import java.util.Scanner;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -79,7 +81,7 @@ public class ForgeController {
         @Param("email") String email,
         @Param("username") String username,
         @Param("password") String password,
-        @Param("verificationCode") String verificationCode) throws IOException {
+        @Param("verificationCode") String verificationCode) throws IOException, MessagingException {
         if (customerService.findCustomerByEmail(email) != null) {
             return "EMAIL_EXISTS";
         }
@@ -94,13 +96,13 @@ public class ForgeController {
         return "OK";
     }
 
-    private void sendVerificationCode(String email, int code) throws IOException {
+    private void sendVerificationCode(String email, int code) throws IOException, MessagingException {
         String subject = "Verification Code";
         String body = "Your verification code is: " + code;
         sendEmail(email, subject, body);
     }
 
-    private void sendEmail(String email, String subject, String body) throws IOException {
+    private void sendEmail(String email, String subject, String body) throws IOException, MessagingException {
         Scanner smtpScanner = new Scanner(new File("smtp"));
         String password = smtpScanner.nextLine();
         smtpScanner.close();
@@ -117,12 +119,12 @@ public class ForgeController {
             }
         });
 
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress(sEmail));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+        message.setSubject(subject);
+        message.setText(body);
         try {
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(sEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            message.setSubject(subject);
-            message.setText(body);
             Transport.send(message);
         } catch (Exception e) {
             e.printStackTrace();

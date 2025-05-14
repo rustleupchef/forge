@@ -6,6 +6,47 @@ img {
     top: 1%;
 }
 
+#homeTab {
+    top: 5%;
+}
+
+#profileTab {
+    top: 20%;
+}
+
+#settingsTab {
+    top: 35%;
+}
+
+.tab:hover {
+    background-color: #677bc4;
+}
+
+.tab:active {
+    background-color: #677bc4;
+}
+
+.tab:focus {
+    background-color: #677bc4;
+}
+
+.tab:focus-visible {
+    background-color: #677bc4;
+}
+
+.tab {
+    position: absolute;
+    left: 12.5%;
+    width: 75%;
+    height: 10%;
+    background-color: #7289da;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
 #tabs {
     position: absolute;
     width: 20%;
@@ -48,12 +89,12 @@ img {
     position: absolute;
     width: 20%;
     height: 10%;
-    left: 25%;
+    right: 3.2%;
     top: 85%;
     background-color: #7289da;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 20px;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }

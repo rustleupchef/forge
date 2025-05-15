@@ -1,5 +1,6 @@
 package com.forge.forge;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
@@ -73,6 +74,32 @@ public class ForgeController {
     @GetMapping("/about")
     public String about() {
         return "redirect:/home";
+    }
+
+    @GetMapping("/create-project")
+    public String createProject(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        return "create-project";
+    }
+
+    @PostMapping("/create-project")
+    public void createProjectPost(
+        @Param("name") String name,
+        @Param("description") String description,
+        @Param("isprivate") boolean isprivate,
+        HttpSession session) {
+        System.out.println("Creating project: " + name + " " + description + " " + isprivate);
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = new Repos(name, description, customer.getEmail(), isprivate);
+        reposService.saveRepos(repo);
+    }
+
+    @PostMapping("/get-projects")
+    @ResponseBody public List<Repos> getProjectsPost(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        return reposService.findReposByOwner(customer.getEmail());
     }
 
     @PostMapping("/signup")

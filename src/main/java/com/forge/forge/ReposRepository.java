@@ -4,16 +4,17 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReposRepository extends JpaRepository<Repos, Long> {
     @Query("SELECT r FROM Repos r WHERE r.name = :name AND r.owner = :owner")
     Repos findByNameAndOwner(
-        String name,
-        String owner);
+        @Param("name") String name,
+        @Param("owner") String owner);
 
     @Query("SELECT r FROM Repos r WHERE r.owner = :owner")
     List<Repos> findByOwner(
-        String name);
+        @Param("owner") String owner);
 }

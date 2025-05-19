@@ -90,7 +90,6 @@ public class ForgeController {
         @Param("description") String description,
         @Param("isprivate") boolean isprivate,
         HttpSession session) {
-        System.out.println("Creating project: " + name + " " + description + " " + isprivate);
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = new Repos(name, description, customer.getEmail(), isprivate);
         reposService.saveRepos(repo);

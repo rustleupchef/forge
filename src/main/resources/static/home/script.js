@@ -9,17 +9,19 @@ window.onload = function() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/get-projects", true);
     xhr.onload = function() {
-        if (xhr.status === 200) {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             const projects = JSON.parse(xhr.responseText);
-            const projectList = document.getElementById("project-list");
+            console.log(projects);
+            const projectList = document.getElementById("projectList");
             projectList.innerHTML = "";
             projects.forEach(project => {
-                const li = document.createElement("li");
-                li.innerHTML = "<h3>" + project.name + "</h3><p>" + project.description + "</p>";
-                li.onclick = function() {
+                const bar = document.createElement("div");
+                bar.className = "project-bar";
+                bar.innerHTML = "<h3>" + project.name + "</h3><h5>" + project.description + "</h5>";
+                bar.onclick = function() {
                     window.location.href = "/project/" + project.id;
                 };
-                projectList.appendChild(li);
+                projectList.appendChild(bar);
             });
         } else {
             console.error("Failed to fetch projects:", xhr.statusText);

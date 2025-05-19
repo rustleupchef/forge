@@ -38,7 +38,7 @@ public class ReposService {
         return reposRepository.findAll();
     }
 
-    public List<Repos> findReposByOwner(String name) {
-        return reposRepository.findByOwner(name);
+    public List<Repos> findReposByOwner(String owner) {
+        return reposRepository.findByOwner(owner);
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -168,5 +169,24 @@ public class ForgeController {
             return "INVALID_PASSWORD";
         session.setAttribute("user", customer);
         return "OK";
+    }
+
+    @GetMapping("/project/{id}")
+    public String getProject(@PathVariable("id") Long id, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        
+        Repos repo = reposService.findReposById(id);
+        if (repo == null) {
+            return "redirect:/home";
+        }
+
+        Customer customer = (Customer) session.getAttribute("user");
+        if (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail())) {
+            return "redirect:/home";
+        }
+
+        return "project";
     }
 }

@@ -90,9 +90,10 @@ public class ForgeController {
         @Param("name") String name,
         @Param("description") String description,
         @Param("isprivate") boolean isprivate,
+        @Param("type") byte type,
         HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
-        Repos repo = new Repos(name, description, customer.getEmail(), isprivate);
+        Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
         reposService.saveRepos(repo);
     }
 

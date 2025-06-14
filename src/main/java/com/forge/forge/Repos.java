@@ -25,23 +25,26 @@ public class Repos {
     private String description;
     private String owner;
     private boolean isPrivate;
+    private byte type;
 
     public Repos() {
     }
 
-    public Repos(Long id, String name, String description, String owner, boolean isPrivate) {
+    public Repos(Long id, String name, String description, String owner, boolean isPrivate, byte type) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.isPrivate = isPrivate;
+        this.type = type;
     }
 
-    public Repos(String name, String description, String owner, boolean isPrivate) {
+    public Repos(String name, String description, String owner, boolean isPrivate, byte type) {
         this.name = name;
         this.description = description;
         this.owner = owner;
         this.isPrivate = isPrivate;
+        this.type = type;
     }
 
     public Long getId() {
@@ -80,8 +83,16 @@ public class Repos {
         return isPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
-        isPrivate = aPrivate;
+    public void setPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
+    public byte getType() {
+        return type;
+    }
+
+    public void setType(byte type) {
+        this.type = type;
     }
 
     @Override
@@ -92,6 +103,7 @@ public class Repos {
                 ", description='" + description + '\'' +
                 ", owner='" + owner + '\'' +
                 ", isPrivate=" + isPrivate +
+                ", type=" + type +
                 '}';
     }
 }

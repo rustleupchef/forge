@@ -16,6 +16,10 @@ import javax.mail.internet.MimeMessage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -91,11 +95,41 @@ public class ForgeController {
         @Param("description") String description,
         @Param("isprivate") boolean isprivate,
         @Param("type") byte type,
-        HttpSession session) {
+        HttpSession session) throws IOException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
         reposService.saveRepos(repo);
+
+        String[] types = {"java", "python", "javascript", "cpp", "csharp", "c"};
+        String templatePath = "project-templates/" + types[type - 1] + "/";
+        String outputPath = "projects/" + repo.getId() + "/";
+        new File(outputPath).mkdirs();
+        setup(templatePath, outputPath);
     }
+
+    private void setup(String sourcePath, String outputPath) throws IOException {
+        File source = new File(sourcePath);
+        File[] sourceFiles = source.listFiles();
+
+        for (File file : sourceFiles) {
+            if (file.isDirectory()) {
+                String nSourcePath = file.getPath();
+                File f = new File(outputPath + file.getName() + "/");
+                if (!f.exists()) f.mkdir();
+                String nOutputPath = f.getPath() + "/";
+                setup(nSourcePath, nOutputPath);
+                continue;
+            }
+            copy(file, outputPath);
+        }
+    }
+
+    private void copy (File file, String outputPath) throws IOException {
+        Path sourceFile = Paths.get(file.getAbsolutePath());
+        Path targetFile = Paths.get(outputPath).resolve(file.getName());
+        Files.copy(sourceFile, targetFile, StandardCopyOption.REPLACE_EXISTING);
+    }
+        
 
     @PostMapping("/get-projects")
     @ResponseBody public List<Repos> getProjectsPost(HttpSession session) {

@@ -1,0 +1,68 @@
+#files {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 100%;
+    overflow: scroll;
+    background: #2f3136;
+    color: #fff;
+    border-right: 1px solid #23272a;
+}
+
+#code {
+    position: absolute;
+    top: 10%;
+    left: 20%;
+    width: 78%;
+    height: 64%;
+    font-family: monospace;
+    font-size: 16px;
+    background: #36393f;
+    color: #dcddde;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    padding: 16px;
+}
+
+#top-bar {
+    position: absolute;
+    top: 0;
+    left: 20%;
+    width: 78%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    background: #23272a; 
+    color: #fff;
+    border-bottom: 1px solid #2f3136;
+    padding-left: 16px;
+}
+
+#console {
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 78%;
+    height: 20%;
+    font-family: monospace;
+    font-size: 16px;
+    background: #23272a;
+    color: #b9bbbe;
+    border-top: 1px solid #2f3136;
+    padding: 8px;
+    overflow-y: auto;
+}
+
+#run {
+    background-color: #7289da;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+body {
+    background-color: #2f3136;
+}

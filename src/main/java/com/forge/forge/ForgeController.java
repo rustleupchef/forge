@@ -22,10 +22,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -91,10 +89,10 @@ public class ForgeController {
 
     @PostMapping("/create-project")
     public void createProjectPost(
-        @Param("name") String name,
-        @Param("description") String description,
-        @Param("isprivate") boolean isprivate,
-        @Param("type") byte type,
+        String name,
+        String description,
+        boolean isprivate,
+        byte type,
         HttpSession session) throws IOException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
@@ -139,10 +137,10 @@ public class ForgeController {
 
     @PostMapping("/signup")
     @ResponseBody public String signupPost(
-        @Param("email") String email,
-        @Param("username") String username,
-        @Param("password") String password,
-        @Param("verificationCode") String verificationCode) throws IOException, MessagingException {
+        String email,
+        String username,
+        String password,
+        String verificationCode) throws IOException, MessagingException {
         if (customerService.findCustomerByEmail(email) != null) {
             return "EMAIL_EXISTS";
         }
@@ -194,8 +192,8 @@ public class ForgeController {
 
     @PostMapping("/login")
     @ResponseBody public String loginPost(
-        @Param("email") String email,
-        @Param("password") String password,
+        String email,
+        String password,
         HttpSession session) {
         Customer customer = customerService.findCustomerByEmail(email);
         if (customer == null)
@@ -206,8 +204,8 @@ public class ForgeController {
         return "OK";
     }
 
-    @GetMapping("/project/{id}")
-    public String getProject(@PathVariable("id") Long id, HttpSession session) {
+    @GetMapping("/project")
+    public String getProject(Long id, HttpSession session) {
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }

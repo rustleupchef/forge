@@ -19,7 +19,7 @@ window.onload = function() {
                 bar.className = "project-bar";
                 bar.innerHTML = "<h3>" + project.name + "</h3><h5>" + project.description + "</h5>";
                 bar.onclick = function() {
-                    window.location.href = "/project/" + project.id;
+                    window.location.href = "/project?id=" + project.id;
                 };
                 projectList.appendChild(bar);
             });

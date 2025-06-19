@@ -1,5 +1,6 @@
 package com.forge.forge;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -16,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -221,5 +223,47 @@ public class ForgeController {
         }
 
         return "project";
+    }
+
+    @PostMapping("/project")
+    @ResponseBody public List<ForgeFile> getProjectPost(Long id, HttpSession session) {
+        System.out.println("Getting files for project with ID: " + id);
+        List<ForgeFile> forgeFiles = new ArrayList<ForgeFile>();
+        forgeFiles = getFilesFromDirectory(new File("projects/" + id + "/"), forgeFiles);
+        return forgeFiles;
+    }
+
+    private List<ForgeFile> getFilesFromDirectory(File directory, List<ForgeFile> forgeFiles) {
+        File[] files = directory.listFiles();
+        System.out.println("Listing files in directory: " + directory.getPath());
+        if (files == null) return forgeFiles;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                ForgeFile forgeFile = new ForgeFile();
+                forgeFile.setName(file.getName());
+                forgeFile.setPath(file.getPath());
+                forgeFile.setType("directory");
+                forgeFile.setContent("");
+                forgeFiles.add(forgeFile);
+                forgeFiles = getFilesFromDirectory(file, forgeFiles);
+            } else {
+                if (file.getName().startsWith(".") 
+                || file.getName().equals("Dockerfile"))
+                    continue;
+                ForgeFile forgeFile = new ForgeFile();
+                forgeFile.setName(file.getName());
+                forgeFile.setPath(file.getPath());
+                forgeFile.setType(file.getName().substring(file.getName().lastIndexOf('.') + 1));
+                try {
+                    forgeFile.setContent(Files.readString(file.toPath()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    forgeFile.setContent("An error occured with this file");
+                }
+                forgeFiles.add(forgeFile);
+            }
+        }
+        return forgeFiles;
     }
 }

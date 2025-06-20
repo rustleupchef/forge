@@ -1,6 +1,9 @@
+let id;
+
 window.onload = function () {
     const sections = window.location.href.split("/");
     const url = "/" + sections[sections.length - 1];
+    id = url.split("?")[1];
     const xhr = new XMLHttpRequest();
     console.log("Loading content from: " + url);
     xhr.open("POST", url, true);
@@ -19,4 +22,22 @@ window.onload = function () {
 
 function returnHome() {
     window.location.href = "/home";
+}
+
+function run() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/run?" + id, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            document.getElementById("console").innerHTML = xhr.responseText;
+        } else {
+            alert("Error running project: " + xhr.statusText);
+        }
+    };
+    xhr.send();
+}
+
+function save() {
+
 }

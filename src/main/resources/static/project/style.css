@@ -23,6 +23,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     padding: 16px;
+    resize: none;
 }
 
 #top-bar {
@@ -32,6 +33,7 @@
     width: 79%;
     height: 10%;
     display: flex;
+    justify-content: center;
     align-items: center;
     background: #23272a; 
     color: #fff;
@@ -54,12 +56,13 @@
     overflow-y: auto;
 }
 
-#run {
+button {
     background-color: #7289da;
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 16px 32px;
     border-radius: 4px;
+    margin: 10px;
     cursor: pointer;
 }
 

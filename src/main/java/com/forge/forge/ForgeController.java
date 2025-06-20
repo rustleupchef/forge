@@ -227,7 +227,6 @@ public class ForgeController {
 
     @PostMapping("/project")
     @ResponseBody public List<ForgeFile> getProjectPost(Long id, HttpSession session) {
-        System.out.println("Getting files for project with ID: " + id);
         List<ForgeFile> forgeFiles = new ArrayList<ForgeFile>();
         forgeFiles = getFilesFromDirectory(new File("projects/" + id + "/"), forgeFiles);
         return forgeFiles;
@@ -235,7 +234,6 @@ public class ForgeController {
 
     private List<ForgeFile> getFilesFromDirectory(File directory, List<ForgeFile> forgeFiles) {
         File[] files = directory.listFiles();
-        System.out.println("Listing files in directory: " + directory.getPath());
         if (files == null) return forgeFiles;
 
         for (File file : files) {
@@ -265,5 +263,11 @@ public class ForgeController {
             }
         }
         return forgeFiles;
+    }
+
+    @PostMapping("/run")
+    @ResponseBody public String run(Long id) {
+        
+        return "";
     }
 }

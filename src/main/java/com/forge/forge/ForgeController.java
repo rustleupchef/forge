@@ -16,6 +16,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
@@ -269,5 +272,20 @@ public class ForgeController {
     @ResponseBody public String run(Long id) {
         
         return "";
+    }
+
+    @PostMapping("/save")
+    @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files) throws IOException {
+        for (ForgeFile forgeFile : files) {
+            File file = new File(forgeFile.getPath());
+            if (!file.isDirectory()) {
+                System.out.println(file.exists());
+                FileWriter fileWriter = new FileWriter(file);
+                System.out.println(forgeFile.getContent());
+                fileWriter.write(forgeFile.getContent());
+                fileWriter.close();
+            }
+        }
+        return 0;
     }
 }

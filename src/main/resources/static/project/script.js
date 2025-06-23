@@ -4,17 +4,22 @@ let currentFilePath;
 
 window.onload = loadFiles;
 
+window.onbeforeunload = function() {
+    save(false);
+}
+
 function returnHome() {
     window.location.href = "/home";
 }
 
 function loadFileContent(filePath) {
+    save(true);
     currentFilePath = filePath;
     document.getElementById("code").innerText = "Loading...";
     files.forEach(file => {
         if (file.path === filePath) {
-            document.getElementById("fileName").readOnly = false;
-            document.getElementById("code").innerText = file.content;     
+            document.getElementById("code").readOnly = false;
+            document.getElementById("code").value = file.content;     
         }
     });
 }
@@ -24,11 +29,21 @@ function run() {
 }
 
 function updateText() {
-
+    const code = document.getElementById("code").value;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].path === currentFilePath) {
+            files[i].content = code;
+            break;
+        }
+    }
+    console.log(files)
 }
 
-function save() {
-
+function save(type) {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/save?" + id, type);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(files));
 }
 
 function loadFiles () {
@@ -43,7 +58,12 @@ function loadFiles () {
             files = JSON.parse(xhr.responseText);
             const fileList = document.getElementById("files");
             files.forEach(file => {
-                const button = document.createElement(file.type === "directory" ? "button" : "div");
+                if (file.type === "directory") {
+                    const folder = document.getElementById("div");
+                    folder.innerText = file.name;
+                    fileList.appendChild(folder);
+                }
+                const button = document.createElement("button");
                 button.innerText = file.name;
                 button.onclick = function() {
                     loadFileContent(file.path);

@@ -237,21 +237,22 @@ public class ForgeController {
 
         for (File file : files) {
             if (file.isDirectory()) {
-                ForgeFile forgeFile = new ForgeFile();
-                forgeFile.setName(file.getName());
-                forgeFile.setPath(file.getPath());
-                forgeFile.setType("directory");
-                forgeFile.setContent("");
+                ForgeFile forgeFile = new ForgeFile(
+                    file.getName(), 
+                    file.getPath(),
+                    "directory",
+                    "");
                 forgeFiles.add(forgeFile);
                 forgeFiles = getFilesFromDirectory(file, forgeFiles);
             } else {
                 if (file.getName().startsWith(".") 
                 || file.getName().equals("Dockerfile"))
                     continue;
-                ForgeFile forgeFile = new ForgeFile();
-                forgeFile.setName(file.getName());
-                forgeFile.setPath(file.getPath());
-                forgeFile.setType(file.getName().substring(file.getName().lastIndexOf('.') + 1));
+                ForgeFile forgeFile = new ForgeFile(
+                    file.getName(), 
+                    file.getPath(), 
+                    file.getName().substring(file.getName().lastIndexOf('.') + 1), 
+                    "");
                 try {
                     forgeFile.setContent(Files.readString(file.toPath()));
                 } catch (IOException e) {

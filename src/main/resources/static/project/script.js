@@ -56,6 +56,12 @@ function disableMenus(type) {
         fileMenu.style.display = 'none';
         folderMenu.style.display = 'none';
     }
+
+    if (type === "all") {
+        fileMenu.style.display = 'none';
+        folderMenu.style.display = 'none';
+        divMenu.style.display = 'none';
+    }
 }
 
 window.onbeforeunload = function() {
@@ -106,8 +112,7 @@ function loadFiles () {
     const url = "/" + sections[sections.length - 1];
     id = url.split("?")[1];
     const xhr = new XMLHttpRequest();
-    console.log("Loading content from: " + url);
-    xhr.open("POST", url, true);
+    xhr.open("POST", url);
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             files = JSON.parse(xhr.responseText);
@@ -156,16 +161,35 @@ function loadFiles () {
     xhr.send();
 }
 
-function addFile() {
-
+function addFile(type) {
+    const path = encodeURIComponent(currentFile ? currentFile.path : `projects/${id.split("=")[1]}/`);
+    const fileName = encodeURIComponent(prompt("Enter the name of the new file:", "newFile.txt"));
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `/add-file?path=${path}&fileName=${fileName}&type=${type}`);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            loadFiles();
+        } else {
+            alert("Error creating file: " + xhr.statusText);
+        }
+    };
+    xhr.send();
+    disableMenus("all");
 }
 
 function deleteFile() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/delete-file");
     xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            loadFiles();
+        } else {
+            alert("Error deleting file: " + xhr.statusText);
+        }
+    };
     xhr.send(JSON.stringify(currentFile));
-    loadFiles();
+    disableMenus("all");
 }
 
 function rename() {
@@ -181,15 +205,5 @@ function uploadFile() {
 }
 
 function layer(path) {
-    console.log(path);
-    console.log(path.split("/").length - 2);
     return path.split("/").length - 3;
-}
-
-function timeString(str, num) {
-    let s = "";
-    for (let i = 0; i < num; i++) {
-        s += str;
-    }
-    return s;
 }

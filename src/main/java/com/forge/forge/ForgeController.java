@@ -288,8 +288,25 @@ public class ForgeController {
 
     @PostMapping("/delete-file")
     @ResponseBody public int deleteFile(@RequestBody ForgeFile file) {
-        System.out.println(new File(file.getPath()));
         delete(new File(file.getPath()));
+        return 0;
+    }
+
+    @PostMapping("/add-file")
+    @ResponseBody public int addFile(String path, String fileName, String type) throws IOException {
+        if (type.equals("folder")) {
+            File dir = new File(path + "/" + fileName);
+            if (dir.exists())
+                return 1;
+            dir.mkdirs();
+            return 0;
+        }
+        File file = new File(path + "/" + fileName);
+        if (file.exists())
+            return 1;
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write("");
+        fileWriter.close();
         return 0;
     }
 
@@ -303,6 +320,5 @@ public class ForgeController {
             }
         }
         file.delete();
-
     }
 }

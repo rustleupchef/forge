@@ -310,6 +310,19 @@ public class ForgeController {
         return 0;
     }
 
+    @PostMapping("/rename-file")
+    @ResponseBody public int renameFile(String path, String fileName) {
+        File file = new File(path);
+        File newFile = new File(file.getParent(), fileName);
+        if (newFile.exists()) {
+            return 1;
+        }
+        if (!file.renameTo(newFile)) {
+            return 1;
+        }
+        return 0;
+    }
+
     private static void delete(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();

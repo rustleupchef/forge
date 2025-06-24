@@ -163,7 +163,7 @@ function loadFiles () {
 
 function addFile(type) {
     const path = encodeURIComponent(currentFile ? currentFile.path : `projects/${id.split("=")[1]}/`);
-    const fileName = encodeURIComponent(prompt("Enter the name of the new file:", "newFile.txt"));
+    const fileName = encodeURIComponent(prompt("Enter the name of the new file:", "file name"));
     const xhr = new XMLHttpRequest();
     xhr.open("POST", `/add-file?path=${path}&fileName=${fileName}&type=${type}`);
     xhr.onload = function() {
@@ -193,15 +193,19 @@ function deleteFile() {
 }
 
 function rename() {
-
-}
-
-function downloadFile() {
-
-}
-
-function uploadFile() {
-
+    const path = encodeURIComponent(currentFile ? currentFile.path : `projects/${id.split("=")[1]}/`);
+    const fileName = encodeURIComponent(prompt("Enter the name of the new file:", "new name"));
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `/rename-file?path=${path}&fileName=${fileName}`);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            loadFiles();
+        } else {
+            alert("Error creating file: " + xhr.statusText);
+        }
+    };
+    xhr.send();
+    disableMenus("all");
 }
 
 function layer(path) {

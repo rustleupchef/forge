@@ -28,7 +28,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
@@ -279,13 +278,31 @@ public class ForgeController {
         for (ForgeFile forgeFile : files) {
             File file = new File(forgeFile.getPath());
             if (!file.isDirectory()) {
-                System.out.println(file.exists());
                 FileWriter fileWriter = new FileWriter(file);
-                System.out.println(forgeFile.getContent());
                 fileWriter.write(forgeFile.getContent());
                 fileWriter.close();
             }
         }
         return 0;
+    }
+
+    @PostMapping("/delete-file")
+    @ResponseBody public int deleteFile(@RequestBody ForgeFile file) {
+        System.out.println(new File(file.getPath()));
+        delete(new File(file.getPath()));
+        return 0;
+    }
+
+    private static void delete(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File f : files) {
+                    delete(f);
+                }
+            }
+        }
+        file.delete();
+
     }
 }

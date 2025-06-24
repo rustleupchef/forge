@@ -1,8 +1,62 @@
 let id;
 let files;
 let currentFilePath;
+let isRunning = false;
+let currentFile;
 
-window.onload = loadFiles;
+window.onload = function() {
+    const fileMenu = document.getElementById("fileMenu");
+    const divMenu = document.getElementById("divMenu");
+    const folderMenu = document.getElementById("folderMenu");
+
+
+    document.getElementById("files").addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        disableMenus("")
+        divMenu.style.display = "block";
+        divMenu.style.left = event.pageX + "px";
+        divMenu.style.top = event.pageY + "px";
+        currentFile = null;
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!divMenu.contains(e.target)) {
+            divMenu.style.display = 'none';
+        }
+
+        if (!folderMenu.contains(e.target)) {
+            folderMenu.style.display = 'none';
+        }
+
+        if (!fileMenu.contains(e.target)) {
+            fileMenu.style.display = 'none';
+        }
+
+        currentFile = null;
+    });
+    loadFiles();
+};
+
+function disableMenus(type) {
+    const fileMenu = document.getElementById("fileMenu");
+    const divMenu = document.getElementById("divMenu");
+    const folderMenu = document.getElementById("folderMenu");
+
+    if (type === "file") {
+        divMenu.style.display = 'none';
+        folderMenu.style.display = 'none';
+    }
+
+    if (type === "folder") {
+        divMenu.style.display = 'none';
+        fileMenu.style.display = 'none';
+    }
+
+    if (type === "") {
+        fileMenu.style.display = 'none';
+        folderMenu.style.display = 'none';
+    }
+}
 
 window.onbeforeunload = function() {
     save(false);
@@ -25,7 +79,7 @@ function loadFileContent(filePath) {
 }
 
 function run() {
-
+    save(false);
 }
 
 function updateText() {
@@ -36,7 +90,6 @@ function updateText() {
             break;
         }
     }
-    console.log(files)
 }
 
 function save(type) {
@@ -47,6 +100,8 @@ function save(type) {
 }
 
 function loadFiles () {
+    const fileList = document.getElementById("files");
+    fileList.replaceChildren();
     const sections = window.location.href.split("/");
     const url = "/" + sections[sections.length - 1];
     id = url.split("?")[1];
@@ -56,18 +111,41 @@ function loadFiles () {
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             files = JSON.parse(xhr.responseText);
-            const fileList = document.getElementById("files");
             files.forEach(file => {
-                if (file.type === "directory") {
-                    const folder = document.getElementById("div");
-                    folder.innerText = file.name;
-                    fileList.appendChild(folder);
-                }
                 const button = document.createElement("button");
-                button.innerText = file.name;
-                button.onclick = function() {
-                    loadFileContent(file.path);
-                };
+                button.style.paddingLeft = (layer(file.path) * 20) + "px";
+                button.innerText = (file.type === "directory" 
+                    ? ">  " 
+                    : `(${file.type})  `) + file.name;
+                button.className = "file-item";
+                if (file.type !== "directory") {
+                    button.onclick = function() {
+                        loadFileContent(file.path);
+                    };
+                }
+                if (file.type === "directory") {
+                    button.addEventListener("contextmenu", function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        disableMenus("folder");
+                        const folderMenu = document.getElementById("folderMenu");
+                        folderMenu.style.display = "block";
+                        folderMenu.style.left = event.pageX + "px";
+                        folderMenu.style.top = event.pageY + "px";
+                        currentFile = file;
+                    });
+                } else {
+                    button.addEventListener("contextmenu", function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        disableMenus("file");
+                        const fileMenu = document.getElementById("fileMenu");
+                        fileMenu.style.display = "block";
+                        fileMenu.style.left = event.pageX + "px";
+                        fileMenu.style.top = event.pageY + "px";
+                        currentFile = file;
+                    });
+                }
                 fileList.appendChild(button);
             });
         } else {
@@ -76,4 +154,42 @@ function loadFiles () {
         }
     };
     xhr.send();
+}
+
+function addFile() {
+
+}
+
+function deleteFile() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/delete-file");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.send(JSON.stringify(currentFile));
+    loadFiles();
+}
+
+function rename() {
+
+}
+
+function downloadFile() {
+
+}
+
+function uploadFile() {
+
+}
+
+function layer(path) {
+    console.log(path);
+    console.log(path.split("/").length - 2);
+    return path.split("/").length - 3;
+}
+
+function timeString(str, num) {
+    let s = "";
+    for (let i = 0; i < num; i++) {
+        s += str;
+    }
+    return s;
 }

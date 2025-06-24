@@ -14,5 +14,22 @@
             <button id="save" onclick="save()">Save</button>
         </div>
         <div id="console"></div>
+
+        <div id="folderMenu" class="context-menu">
+            <button onclick="deleteFile()">Delete</button>
+            <button onclick="addFile()">Add</button>
+            <button onclick="rename()">Rename</button>
+        </div>
+
+        <div id="fileMenu" class="context-menu">
+            <button onclick="deleteFile()">Delete</button>
+            <button onclick="rename()">Rename</button>
+            <button onclick="downloadFile()">Download</button>
+        </div>
+
+        <div id="divMenu" class="context-menu">
+            <button onclick="addFile()">Add File</button>
+            <button onclick="uploadFile()">Upload File</button>
+        </div>
     </body>
 </html>

@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -46,6 +47,10 @@ public class ForgeController {
     public ForgeController(CustomerService customerService, ReposService reposService) {
         this.reposService = reposService;
         this.customerService = customerService;
+    }
+
+    @PostConstruct
+    public void init() {
     }
 
     @GetMapping("/home")
@@ -268,8 +273,8 @@ public class ForgeController {
     }
 
     @PostMapping("/run")
-    @ResponseBody public String run(Long id) {
-        
+    @ResponseBody public String run(Long id, HttpSession session) {
+        File projectDir = new File("projects/" + id + "/");
         return "";
     }
 

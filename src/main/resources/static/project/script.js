@@ -86,6 +86,23 @@ function loadFileContent(filePath) {
 
 function run() {
     save(false);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/run?" + id);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                isRunning = true;
+                document.getElementById("runButton").innerText = "Stop";
+                document.getElementById("output").value = response.output;
+            } else {
+                alert("Error running the project: " + response.error);
+            }
+        } else {
+            alert("Error running the project: " + xhr.statusText);
+        }
+    }
+    xhr.send();
 }
 
 function updateText() {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -276,14 +277,18 @@ public class ForgeController {
         System.out.println("Building and running project in: " + projectDir.getAbsolutePath());
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(projectDir);
-        processBuilder.command("docker", "build", "-t", "project-" + id, ".");
+        processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
         Process process = processBuilder.start();
+        OutputStream outputStream = process.getOutputStream();
+        outputStream.write((password() + "\n").getBytes());
         process.waitFor();
 
         System.out.println("Running project with ID: " + id);
 
-        processBuilder.command("docker", "run", "project-" + id + ":latest");
+        processBuilder.command("sudo", "docker", "run", "project-" + id + ":latest");
         process = processBuilder.start();
+        outputStream = process.getOutputStream();
+        outputStream.write((password() + "\n").getBytes());
 
         session.setAttribute("process", process);
         return 0;
@@ -372,7 +377,7 @@ public class ForgeController {
         return 0;
     }
 
-    private static void delete(File file) {
+    private void delete(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {
@@ -383,4 +388,11 @@ public class ForgeController {
         }
         file.delete();
     }
+
+    private String password() throws IOException {
+        Scanner scanner = new Scanner(new File("password"));
+        String password = scanner.nextLine();
+        scanner.close();
+        return password;
+    } 
 }   

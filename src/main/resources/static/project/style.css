@@ -95,6 +95,10 @@
     background-color: #40444b;
 }
 
+.running-button {
+    background-color: #2f3136;
+}
+
 button {
     background-color: #7289da;
     color: white;

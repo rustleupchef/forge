@@ -15,9 +15,12 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,7 +35,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -47,10 +49,6 @@ public class ForgeController {
     public ForgeController(CustomerService customerService, ReposService reposService) {
         this.reposService = reposService;
         this.customerService = customerService;
-    }
-
-    @PostConstruct
-    public void init() {
     }
 
     @GetMapping("/home")
@@ -273,10 +271,56 @@ public class ForgeController {
     }
 
     @PostMapping("/run")
-    @ResponseBody public String run(Long id, HttpSession session) {
+    @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
         File projectDir = new File("projects/" + id + "/");
-        return "";
+        System.out.println("Building and running project in: " + projectDir.getAbsolutePath());
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(projectDir);
+        processBuilder.command("docker", "build", "-t", "project-" + id, ".");
+        Process process = processBuilder.start();
+        process.waitFor();
+
+        System.out.println("Running project with ID: " + id);
+
+        processBuilder.command("docker", "run", "project-" + id + ":latest");
+        process = processBuilder.start();
+
+        session.setAttribute("process", process);
+        return 0;
     }
+
+    @PostMapping("/ping")
+    @ResponseBody public Data ping(HttpSession session) throws IOException {
+        Process process = (Process) session.getAttribute("process");
+        if (process == null) {
+            return new Data("No process running", "error");
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        if ((line = reader.readLine()) != null) {
+            System.out.println("Output: ");
+            return new Data(line + "\n", "running");
+        }
+
+        if (!process.isAlive()) {
+            process.destroy();
+            session.removeAttribute("process");
+            return new Data("Process ended", "stopped");
+        }
+
+        return new Data("", "running");
+    }
+
+    @PostMapping("/stop")
+    @ResponseBody public int stop(HttpSession session) {
+        Process process = (Process) session.getAttribute("process");
+        if (process != null) {
+            process.destroy();
+            session.removeAttribute("process");
+        }
+        return 0;
+    }
+
 
     @PostMapping("/save")
     @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files) throws IOException {
@@ -339,4 +383,4 @@ public class ForgeController {
         }
         file.delete();
     }
-}
+}   

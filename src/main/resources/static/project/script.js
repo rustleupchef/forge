@@ -35,6 +35,7 @@ window.onload = function() {
         currentFile = null;
     });
     loadFiles();
+    setInterval(ping, 1000);
 };
 
 function disableMenus(type) {
@@ -65,6 +66,7 @@ function disableMenus(type) {
 }
 
 window.onbeforeunload = function() {
+    kill();
     save(false);
 }
 
@@ -84,22 +86,64 @@ function loadFileContent(filePath) {
     });
 }
 
+function kill() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/stop?" + id);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            isRunning = false;
+            document.getElementById("run").innerText = "Run";
+            document.getElementById("run").className = "";
+            save(false);
+        } else {
+            alert("Error stopping the process: " + xhr.statusText);
+        }
+    }
+    xhr.send();
+}
+
 function run() {
+    if (isRunning) {
+        kill();
+        return;
+    }
+    document.getElementById("console").value = "";
     save(false);
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/run?" + id);
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
+            isRunning = true;
+            document.getElementById("run").innerText = "Stop";
+            document.getElementById("run").className = "running-button";
+        }
+    }
+    xhr.send();
+}
+
+function ping() {
+    if (!isRunning) return;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/ping");
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
             const response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                isRunning = true;
-                document.getElementById("runButton").innerText = "Stop";
-                document.getElementById("output").value = response.output;
-            } else {
-                alert("Error running the project: " + response.error);
+            if (response.type === "running") {
+                document.getElementById("console").innerText += response.message;
+            }
+
+            if (response.type === "stopped") {
+                alert("Process has stopped.");
+            }
+
+            if (response.type === "error") {
+                isRunning = false;
+                document.getElementById("run").innerText = "Run";
+                document.getElementById("run").className = "";
+                save(false);
             }
         } else {
-            alert("Error running the project: " + xhr.statusText);
+            alert("Error pinging the server: " + xhr.statusText);
         }
     }
     xhr.send();
@@ -116,6 +160,7 @@ function updateText() {
 }
 
 function save(type) {
+    if (isRunning) return;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/save?" + id, type);
     xhr.setRequestHeader("Content-Type", "application/json");

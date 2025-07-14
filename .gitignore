@@ -34,3 +34,6 @@ build/
 
 ## Regular files ##
 smtp
+project-templates/csharp/obj/
+project-templates/csharp/bin/
+forge.sln

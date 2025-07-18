@@ -285,7 +285,7 @@ public class ForgeController {
 
         System.out.println("Running project with ID: " + id);
 
-        processBuilder.command("sudo", "docker", "run", "project-" + id + ":latest");
+        processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
         process = processBuilder.start();
         outputStream = process.getOutputStream();
         outputStream.write((password() + "\n").getBytes());
@@ -303,8 +303,18 @@ public class ForgeController {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         if ((line = reader.readLine()) != null) {
-            System.out.println("Output: ");
             return new Data(line + "\n", "running");
+        }
+
+        String text = "";
+        reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        while ((line = reader.readLine()) != null) {
+            System.out.println("Error: " + line);
+            text += line + "\n";
+        }
+
+        if (!text.isEmpty()) {
+            return new Data(text, "error");
         }
 
         if (!process.isAlive()) {

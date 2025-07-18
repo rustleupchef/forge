@@ -2,6 +2,7 @@ let id;
 let files;
 let currentFilePath;
 let isRunning = false;
+let isPinging = false;
 let currentFile;
 
 window.onload = function() {
@@ -35,7 +36,7 @@ window.onload = function() {
         currentFile = null;
     });
     loadFiles();
-    setInterval(ping, 1000);
+    setInterval(ping, 200);
 };
 
 function disableMenus(type) {
@@ -107,7 +108,7 @@ function run() {
         kill();
         return;
     }
-    document.getElementById("console").value = "";
+    document.getElementById("console").innerText = "";
     save(false);
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/run?" + id);
@@ -123,6 +124,8 @@ function run() {
 
 function ping() {
     if (!isRunning) return;
+    if (isPinging) return;
+    isPinging = true;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/ping");
     xhr.onload = function() {
@@ -140,11 +143,13 @@ function ping() {
                 isRunning = false;
                 document.getElementById("run").innerText = "Run";
                 document.getElementById("run").className = "";
+                document.getElementById("console").innerText += response.message;
                 save(false);
             }
         } else {
             alert("Error pinging the server: " + xhr.statusText);
         }
+        isPinging = false;
     }
     xhr.send();
 }

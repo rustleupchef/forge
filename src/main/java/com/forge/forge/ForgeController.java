@@ -152,7 +152,7 @@ public class ForgeController {
         }
 
         if (verificationCode.equals("null") || verificationCode.isEmpty()) {
-            int num = new Random().nextInt(1000000);
+            int num = new Random().nextInt(1000000, 9999999);
             sendVerificationCode(email, num);
             return String.valueOf(num);
         }

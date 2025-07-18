@@ -136,7 +136,11 @@ function ping() {
             }
 
             if (response.type === "stopped") {
-                alert("Process has stopped.");
+                alert(response.message);
+                isRunning = false;
+                document.getElementById("run").innerText = "Run";
+                document.getElementById("run").className = "";
+                save(false);
             }
 
             if (response.type === "error") {

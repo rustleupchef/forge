@@ -298,7 +298,7 @@ public class ForgeController {
     @ResponseBody public Data ping(HttpSession session) throws IOException {
         Process process = (Process) session.getAttribute("process");
         if (process == null) {
-            return new Data("No process running", "error");
+            return new Data("Process ended", "stopped");
         }
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
@@ -309,7 +309,6 @@ public class ForgeController {
         String text = "";
         reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         while ((line = reader.readLine()) != null) {
-            System.out.println("Error: " + line);
             text += line + "\n";
         }
 

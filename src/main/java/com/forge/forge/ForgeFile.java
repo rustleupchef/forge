@@ -5,6 +5,7 @@ public class ForgeFile {
     private String path;
     private String type;
     private String content;
+    private boolean isHidden = false;
 
     public ForgeFile() {
 
@@ -47,5 +48,13 @@ public class ForgeFile {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
+
+    public void setHidden(boolean isHidden) {
+        this.isHidden = isHidden;
     }
 }

@@ -87,6 +87,21 @@ function loadFileContent(filePath) {
     });
 }
 
+function closeFolder(file) {
+    inititalValue = file.hidden;    
+    const path = file.path;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].path.startsWith(path) && files[i].path !== path) {
+            files[i].hidden = !file.hidden;
+        }
+    }
+    if (inititalValue) file.hidden = false;
+    const fileList = document.getElementById("files");
+    fileList.replaceChildren();
+    displayFiles(files);
+    if (!inititalValue) file.hidden = true;
+}
+
 function kill() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/stop?" + id);
@@ -216,49 +231,56 @@ function loadFiles () {
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             files = JSON.parse(xhr.responseText);
-            files.forEach(file => {
-                const button = document.createElement("button");
-                button.style.paddingLeft = (layer(file.path) * 20) + "px";
-                button.innerText = (file.type === "directory" 
-                    ? ">  " 
-                    : `(${file.type})  `) + file.name;
-                button.className = "file-item";
-                if (file.type !== "directory") {
-                    button.onclick = function() {
-                        loadFileContent(file.path);
-                    };
-                }
-                if (file.type === "directory") {
-                    button.addEventListener("contextmenu", function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        disableMenus("folder");
-                        const folderMenu = document.getElementById("folderMenu");
-                        folderMenu.style.display = "block";
-                        folderMenu.style.left = event.pageX + "px";
-                        folderMenu.style.top = event.pageY + "px";
-                        currentFile = file;
-                    });
-                } else {
-                    button.addEventListener("contextmenu", function(event) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        disableMenus("file");
-                        const fileMenu = document.getElementById("fileMenu");
-                        fileMenu.style.display = "block";
-                        fileMenu.style.left = event.pageX + "px";
-                        fileMenu.style.top = event.pageY + "px";
-                        currentFile = file;
-                    });
-                }
-                fileList.appendChild(button);
-            });
+            displayFiles(files);
         } else {
             alert("Error loading content: " + xhr.statusText);
             setTimeout(returnHome, 3000);
         }
     };
     xhr.send();
+}
+
+function displayFiles(files, fileList = document.getElementById("files")) {
+    console.log(files);
+    files.forEach(file => {
+        if (file.hidden) return;
+        const button = document.createElement("button");
+        button.style.paddingLeft = (layer(file.path) * 20) + "px";
+        button.innerText = (file.type === "directory" 
+            ? ">  " 
+            : `(${file.type})  `) + file.name;
+        button.className = "file-item";
+        if (file.type === "directory") {
+            button.onclick = function() {
+                closeFolder(file);
+            }
+            button.addEventListener("contextmenu", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                disableMenus("folder");
+                const folderMenu = document.getElementById("folderMenu");
+                folderMenu.style.display = "block";
+                folderMenu.style.left = event.pageX + "px";
+                folderMenu.style.top = event.pageY + "px";
+                currentFile = file;
+            });
+        } else {
+            button.onclick = function() {
+                loadFileContent(file.path);
+            };
+            button.addEventListener("contextmenu", function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                disableMenus("file");
+                const fileMenu = document.getElementById("fileMenu");
+                fileMenu.style.display = "block";
+                fileMenu.style.left = event.pageX + "px";
+                fileMenu.style.top = event.pageY + "px";
+                currentFile = file;
+            });
+        }
+        fileList.appendChild(button);
+    });
 }
 
 function addFile(type) {

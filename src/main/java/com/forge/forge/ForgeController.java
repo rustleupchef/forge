@@ -331,6 +331,7 @@ public class ForgeController {
         OutputStream outputStream = process.getOutputStream();
         outputStream.write((command + "\n").getBytes());
         outputStream.flush();
+        outputStream.close();
 
         return 0;
 

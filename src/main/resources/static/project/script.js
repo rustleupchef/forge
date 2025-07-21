@@ -101,6 +101,31 @@ function kill() {
         }
     }
     xhr.send();
+    destroyConsoleInputs();
+}
+
+function destroyConsoleInputs() {
+    const consoleInputs = document.querySelectorAll(".console-input");
+    consoleInputs.forEach(input => {
+        input.remove();
+    });
+}
+
+function addConsoleInput() {
+    const consoleInput = document.createElement("input");
+    consoleInput.type = "text";
+    consoleInput.placeholder = "Enter command";
+    consoleInput.className = "console-input";
+    consoleInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            const command = consoleInput.value;
+            document.getElementById("console").innerText += command + "\n";
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "/console-command?command=" + encodeURIComponent(command));
+            xhr.send();
+        }
+    });
+    document.getElementById("console").appendChild(consoleInput);
 }
 
 function run() {
@@ -117,6 +142,7 @@ function run() {
             isRunning = true;
             document.getElementById("run").innerText = "Stop";
             document.getElementById("run").className = "running-button";
+            addConsoleInput();
         }
     }
     xhr.send();
@@ -133,6 +159,7 @@ function ping() {
             const response = JSON.parse(xhr.responseText);
             if (response.type === "running") {
                 document.getElementById("console").innerText += response.message;
+                addConsoleInput();
             }
 
             if (response.type === "stopped") {
@@ -141,6 +168,7 @@ function ping() {
                 document.getElementById("run").innerText = "Run";
                 document.getElementById("run").className = "";
                 save(false);
+                destroyConsoleInputs();
             }
 
             if (response.type === "error") {
@@ -149,6 +177,7 @@ function ping() {
                 document.getElementById("run").className = "";
                 document.getElementById("console").innerText += response.message;
                 save(false);
+                destroyConsoleInputs();
             }
         } else {
             alert("Error pinging the server: " + xhr.statusText);

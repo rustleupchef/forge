@@ -278,16 +278,11 @@ public class ForgeController {
         processBuilder.directory(projectDir);
         processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
         Process process = processBuilder.start();
-        OutputStream outputStream = process.getOutputStream();
-        outputStream.write((password() + "\n").getBytes());
         process.waitFor();
 
         System.out.println("Running project with ID: " + id);
-
         processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
         process = processBuilder.start();
-        outputStream = process.getOutputStream();
-        outputStream.write((password() + "\n").getBytes());
 
         session.setAttribute("process", process);
         return 0;
@@ -299,6 +294,7 @@ public class ForgeController {
         if (process == null) {
             return new Data("Process ended", "stopped");
         }
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         if ((line = reader.readLine()) != null) {
@@ -322,6 +318,22 @@ public class ForgeController {
         }
 
         return new Data("", "running");
+    }
+
+    @PostMapping("/console-command")
+    @ResponseBody public int consoleCommand(String command, HttpSession session) throws IOException, InterruptedException {
+        Process process = (Process) session.getAttribute("process");
+
+        if (process == null) {
+            return 1;
+        }
+
+        OutputStream outputStream = process.getOutputStream();
+        outputStream.write((command + "\n").getBytes());
+        outputStream.flush();
+
+        return 0;
+
     }
 
     @PostMapping("/stop")

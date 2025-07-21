@@ -407,12 +407,5 @@ public class ForgeController {
             }
         }
         file.delete();
-    }
-
-    private String password() throws IOException {
-        Scanner scanner = new Scanner(new File("password"));
-        String password = scanner.nextLine();
-        scanner.close();
-        return password;
     } 
 }   

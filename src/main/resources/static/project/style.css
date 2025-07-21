@@ -110,6 +110,10 @@
     padding: 8px;
 }
 
+.console-input:focus {
+    outline: none;
+}
+
 button {
     background-color: #7289da;
     color: white;

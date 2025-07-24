@@ -273,14 +273,18 @@ public class ForgeController {
     @PostMapping("/run")
     @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
         File projectDir = new File("projects/" + id + "/");
-        System.out.println("Building and running project in: " + projectDir.getAbsolutePath());
+
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(projectDir);
-        processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
+
+        processBuilder.command("sudo", "docker", "rmi", "-f", "project-" + id + ":latest");
         Process process = processBuilder.start();
         process.waitFor();
 
-        System.out.println("Running project with ID: " + id);
+        processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
+        process = processBuilder.start();
+        process.waitFor();
+
         processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
         process = processBuilder.start();
 

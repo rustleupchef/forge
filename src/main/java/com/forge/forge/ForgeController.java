@@ -294,6 +294,18 @@ public class ForgeController {
         return forgeFiles;
     }
 
+    @PostMapping("/delete-project")
+    @ResponseBody public int deleteProject(Long id) {
+        File projectDir = new File("projects/" + id + "/");
+        if (!projectDir.exists()) {
+            return 1;
+        }
+        
+        delete(projectDir);
+        reposService.deleteRepos(id);
+        return 0;
+    }
+
     @PostMapping("/run")
     @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
         File projectDir = new File("projects/" + id + "/");

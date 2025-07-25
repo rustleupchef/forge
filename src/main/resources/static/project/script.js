@@ -9,6 +9,7 @@ window.onload = function() {
     const fileMenu = document.getElementById("fileMenu");
     const divMenu = document.getElementById("divMenu");
     const folderMenu = document.getElementById("folderMenu");
+    const settingsMenu = document.getElementById("settingsMenu");
 
 
     document.getElementById("files").addEventListener("contextmenu", function(event) {
@@ -18,6 +19,15 @@ window.onload = function() {
         divMenu.style.left = event.pageX + "px";
         divMenu.style.top = event.pageY + "px";
         currentFile = null;
+    });
+
+    document.getElementById("top-bar").addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+        disableMenus("settings");
+        const settingsMenu = document.getElementById("settingsMenu");
+        settingsMenu.style.display = "block";
+        settingsMenu.style.left = event.pageX + "px";
+        settingsMenu.style.top = event.pageY + "px";
     });
 
     document.addEventListener('click', function(e) {
@@ -33,6 +43,10 @@ window.onload = function() {
             fileMenu.style.display = 'none';
         }
 
+        if (!settingsMenu.contains(e.target)) {
+            settingsMenu.style.display = 'none';
+        }
+
         currentFile = null;
     });
     loadFiles();
@@ -43,26 +57,37 @@ function disableMenus(type) {
     const fileMenu = document.getElementById("fileMenu");
     const divMenu = document.getElementById("divMenu");
     const folderMenu = document.getElementById("folderMenu");
+    const settingsMenu = document.getElementById("settingsMenu");
 
     if (type === "file") {
         divMenu.style.display = 'none';
         folderMenu.style.display = 'none';
+        settingsMenu.style.display = 'none';
     }
 
     if (type === "folder") {
         divMenu.style.display = 'none';
         fileMenu.style.display = 'none';
+        settingsMenu.style.display = 'none';
+    }
+
+    if (type === "settings") {
+        divMenu.style.display = 'none';
+        fileMenu.style.display = 'none';
+        folderMenu.style.display = 'none';
     }
 
     if (type === "") {
         fileMenu.style.display = 'none';
         folderMenu.style.display = 'none';
+        settingsMenu
     }
 
     if (type === "all") {
-        fileMenu.style.display = 'none';
-        folderMenu.style.display = 'none';
-        divMenu.style.display = 'none';
+        const menus = document.querySelectorAll(".context-menu");
+        menus.forEach(menu => {
+            menu.style.display = 'none';
+        });
     }
 }
 
@@ -326,6 +351,21 @@ function rename() {
             alert("Error creating file: " + xhr.statusText);
         }
     };
+    xhr.send();
+    disableMenus("all");
+}
+
+function deleteProject() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/delete-project?" + id);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            alert("Project deleted successfully.");
+            returnHome();
+        } else {
+            alert("Error deleting project: " + xhr.statusText);
+        }
+    }
     xhr.send();
     disableMenus("all");
 }

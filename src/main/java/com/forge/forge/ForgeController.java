@@ -99,7 +99,7 @@ public class ForgeController {
         String description,
         boolean isprivate,
         byte type,
-        HttpSession session) throws IOException {
+        HttpSession session) throws IOException, InterruptedException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
         reposService.saveRepos(repo);
@@ -109,6 +109,28 @@ public class ForgeController {
         String outputPath = "projects/" + repo.getId() + "/";
         new File(outputPath).mkdirs();
         setup(templatePath, outputPath);
+
+        File projectDir = new File("projects/" + repo.getId() + "/");
+
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.directory(projectDir);
+
+        
+        processBuilder.command("git", "init");
+        Process process = processBuilder.start();
+        process.waitFor();
+        
+        processBuilder.command("git", "add", ".");
+        process = processBuilder.start();
+        process.waitFor();
+
+        processBuilder.command("git", "commit", "-m", "\"Initial commit\"");
+        process = processBuilder.start();
+        process.waitFor();
+
+        processBuilder.command("sudo", "docker", "build", "-t", "project-" + repo.getId(), ".");
+        process = processBuilder.start();
+        process.waitFor();
     }
 
     private void setup(String sourcePath, String outputPath) throws IOException {
@@ -242,6 +264,8 @@ public class ForgeController {
 
         for (File file : files) {
             if (file.isDirectory()) {
+                if (file.getName().startsWith("."))
+                    continue;
                 ForgeFile forgeFile = new ForgeFile(
                     file.getName(), 
                     file.getPath(),
@@ -276,14 +300,34 @@ public class ForgeController {
 
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.directory(projectDir);
-
-        processBuilder.command("sudo", "docker", "rmi", "-f", "project-" + id + ":latest");
+        
+        
+        processBuilder.command("git", "diff");
         Process process = processBuilder.start();
         process.waitFor();
 
-        processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
-        process = processBuilder.start();
-        process.waitFor();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        if (reader.readLine() != null) {
+            reader.close();
+            process.destroy();
+
+            processBuilder.command("git", "add", ".");
+            process = processBuilder.start();
+            process.waitFor();
+
+            processBuilder.command("git", "commit", "-m", "\"change\"");
+            process = processBuilder.start();
+            process.waitFor();
+
+            processBuilder.command("sudo", "docker", "rmi", "-f", "project-" + id + ":latest");
+            process = processBuilder.start();
+            process.waitFor();
+    
+            processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
+            process = processBuilder.start();
+            process.waitFor();
+        }
+
 
         processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
         process = processBuilder.start();

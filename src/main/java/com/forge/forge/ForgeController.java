@@ -295,12 +295,25 @@ public class ForgeController {
     }
 
     @PostMapping("/delete-project")
-    @ResponseBody public int deleteProject(Long id) {
+    @ResponseBody public int deleteProject(Long id) throws InterruptedException, IOException {
         File projectDir = new File("projects/" + id + "/");
         if (!projectDir.exists()) {
             return 1;
         }
         
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command( "bash", "-c", "sudo docker stop $(docker ps -a --filter ancestor=project-" + id + " -q)");
+        Process process = processBuilder.start();
+        process.waitFor();
+
+        processBuilder.command("bash", "-c", "sudo docker rm $(docker ps -a --filter ancestor=project-" + id + " -q)");
+        process = processBuilder.start();
+        process.waitFor();
+
+        processBuilder.command("sudo",  "docker",  "rmi",  "-f",  "project-" + id + ":latest");
+        process = processBuilder.start();
+        process.waitFor();
+
         delete(projectDir);
         reposService.deleteRepos(id);
         return 0;
@@ -417,7 +430,7 @@ public class ForgeController {
     @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files) throws IOException {
         for (ForgeFile forgeFile : files) {
             File file = new File(forgeFile.getPath());
-            if (!file.isDirectory()) {
+            if (!file.isDirectory() && file.exists()) {
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(forgeFile.getContent());
                 fileWriter.close();
@@ -441,6 +454,10 @@ public class ForgeController {
             dir.mkdirs();
             return 0;
         }
+
+        if (!new File(path).exists())
+            return 1;
+
         File file = new File(path + "/" + fileName);
         if (file.exists())
             return 1;
@@ -474,4 +491,4 @@ public class ForgeController {
         }
         file.delete();
     } 
-}   
+}

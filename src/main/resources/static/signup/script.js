@@ -6,8 +6,7 @@ function resetVerificationCode() {
     document.getElementById("verificationCode").setAttribute("placeholder", "Verification code will be sent to your email");
     document.getElementById("verificationCode").setAttribute("required", "required");
     document.getElementById("verificationCode").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("submit").value = "Send Verification Code";
+    document.getElementById("submit").innerHTML = "Send Verification Code";
 }
 
 function signup() {

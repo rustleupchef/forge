@@ -344,6 +344,11 @@ public class ForgeController {
         processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
         process = processBuilder.start();
 
+        if (session.getAttribute("process") != null) {
+            Process oldProcess = (Process) session.getAttribute("process");
+            oldProcess.destroy();
+        }
+        session.removeAttribute("process");
         session.setAttribute("process", process);
         return 0;
     }

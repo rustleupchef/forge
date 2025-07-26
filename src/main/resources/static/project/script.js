@@ -266,14 +266,13 @@ function loadFiles () {
 }
 
 function displayFiles(files, fileList = document.getElementById("files")) {
-    console.log(files);
     files.forEach(file => {
         if (file.hidden) return;
         const button = document.createElement("button");
         button.style.paddingLeft = (layer(file.path) * 20) + "px";
-        button.innerText = (file.type === "directory" 
+        button.innerHTML = (file.type === "directory" 
             ? ">  " 
-            : `(${file.type})  `) + file.name;
+            : `<img src=\"${grabImage(file.type)}\">`) + file.name;
         button.className = "file-item";
         if (file.type === "directory") {
             button.onclick = function() {
@@ -306,6 +305,18 @@ function displayFiles(files, fileList = document.getElementById("files")) {
         }
         fileList.appendChild(button);
     });
+}
+
+function grabImage(type) {
+    const icons = {
+        "c" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/c/c-original.svg",
+        "cpp" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
+        "java" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg",
+        "py" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+        "js" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
+        "default" : "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"};
+    return icons[type] || icons["default"];
+
 }
 
 function addFile(type) {

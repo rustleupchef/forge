@@ -398,6 +398,21 @@ public class ForgeController {
         return new Data("", "running");
     }
 
+    @PostMapping("/check-ownership")
+    @ResponseBody public boolean checkOwnership(Long id, HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return false;
+        }
+
+        Repos repo = reposService.findReposById(id);
+        if (repo == null) {
+            return false;
+        }
+
+        return repo.getOwner().equals(customer.getEmail());
+    }
+
     @PostMapping("/console-command")
     @ResponseBody public int consoleCommand(String command, HttpSession session) throws IOException, InterruptedException {
         Process process = (Process) session.getAttribute("process");

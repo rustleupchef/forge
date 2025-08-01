@@ -1,11 +1,37 @@
 let id;
 let files;
+let isOwner = false
 let currentFilePath;
 let isRunning = false;
 let isPinging = false;
 let currentFile;
 
 window.onload = function() {
+
+    const sections = window.location.href.split("/");
+    const url = "/" + sections[sections.length - 1];
+    id = url.split("?")[1];
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/check-ownership?" + id);
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            isOwner = (xhr.responseText == "true");
+            if (isOwner) {
+                setupEditor();
+            } else {
+                document.getElementById("code").readOnly = true;
+                document.getElementById("save").style.display = "none";
+            }
+        }
+    }
+    xhr.send();
+
+    loadFiles();
+    setInterval(ping, 200);
+};
+
+function setupEditor() {
     const fileMenu = document.getElementById("fileMenu");
     const divMenu = document.getElementById("divMenu");
     const folderMenu = document.getElementById("folderMenu");
@@ -49,9 +75,7 @@ window.onload = function() {
 
         currentFile = null;
     });
-    loadFiles();
-    setInterval(ping, 200);
-};
+}
 
 function disableMenus(type) {
     const fileMenu = document.getElementById("fileMenu");
@@ -106,7 +130,7 @@ function loadFileContent(filePath) {
     document.getElementById("code").innerText = "Loading...";
     files.forEach(file => {
         if (file.path === filePath) {
-            document.getElementById("code").readOnly = false;
+            document.getElementById("code").readOnly = !isOwner;
             document.getElementById("code").value = file.content;     
         }
     });
@@ -228,6 +252,7 @@ function ping() {
 }
 
 function updateText() {
+    if (!isOwner) return;
     const code = document.getElementById("code").value;
     for (let i = 0; i < files.length; i++) {
         if (files[i].path === currentFilePath) {
@@ -238,6 +263,7 @@ function updateText() {
 }
 
 function save(type) {
+    if (!isOwner) return;
     if (isRunning) return;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/save?" + id, type);
@@ -248,11 +274,8 @@ function save(type) {
 function loadFiles () {
     const fileList = document.getElementById("files");
     fileList.replaceChildren();
-    const sections = window.location.href.split("/");
-    const url = "/" + sections[sections.length - 1];
-    id = url.split("?")[1];
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", url);
+    xhr.open("POST", "/project?" + id);
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             files = JSON.parse(xhr.responseText);

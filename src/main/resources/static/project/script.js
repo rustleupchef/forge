@@ -21,7 +21,6 @@ window.onload = function() {
                 setupEditor();
             } else {
                 document.getElementById("code").readOnly = true;
-                document.getElementById("save").style.display = "none";
             }
         }
     }
@@ -74,6 +73,13 @@ function setupEditor() {
         }
 
         currentFile = null;
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "s" && (event.ctrlKey || event.metaKey)) {
+            event.preventDefault();
+            save(true);
+        }
     });
 }
 

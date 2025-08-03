@@ -354,7 +354,7 @@ public class ForgeController {
         }
 
 
-        processBuilder.command("sudo", "docker", "run", "-i", "project-" + id + ":latest");
+        processBuilder.command("sudo", "docker", "run", "-i", "-m", "1024m", "--cpus", "0.8", "project-" + id + ":latest");
         process = processBuilder.start();
 
         if (session.getAttribute("process") != null) {

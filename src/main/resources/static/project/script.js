@@ -81,6 +81,53 @@ function setupEditor() {
             save(true);
         }
     });
+
+    document.getElementById("code").addEventListener("keydown", function(event) {
+        if (event.key === "Tab") {
+            event.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const value = this.value;
+            this.value = value.substring(0, start) + "\t" + value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+
+        if (event.key === "{") {
+            event.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const value = this.value;
+            this.value = value.substring(0, start) + "{}" + value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 2;
+        }
+
+        if (event.key === "\"") {
+            event.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const value = this.value;
+            this.value = value.substring(0, start) + "\"\"" + value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+
+        if (event.key === "'") {
+            event.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const value = this.value;
+            this.value = value.substring(0, start) + "''" + value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+
+        if (event.key === "(") {
+            event.preventDefault();
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+            const value = this.value;
+            this.value = value.substring(0, start) + "()" + value.substring(end);
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+    });
 }
 
 function disableMenus(type) {

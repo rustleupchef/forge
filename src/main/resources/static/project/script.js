@@ -5,6 +5,7 @@ let currentFilePath;
 let isRunning = false;
 let isPinging = false;
 let currentFile;
+let editor;
 
 window.onload = function() {
 
@@ -19,8 +20,6 @@ window.onload = function() {
             isOwner = (xhr.responseText == "true");
             if (isOwner) {
                 setupEditor();
-            } else {
-                document.getElementById("code").readOnly = true;
             }
         }
     }
@@ -81,53 +80,6 @@ function setupEditor() {
             save(true);
         }
     });
-
-    document.getElementById("code").addEventListener("keydown", function(event) {
-        if (event.key === "Tab") {
-            event.preventDefault();
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const value = this.value;
-            this.value = value.substring(0, start) + "\t" + value.substring(end);
-            this.selectionStart = this.selectionEnd = start + 1;
-        }
-
-        if (event.key === "{") {
-            event.preventDefault();
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const value = this.value;
-            this.value = value.substring(0, start) + "{}" + value.substring(end);
-            this.selectionStart = this.selectionEnd = start + 2;
-        }
-
-        if (event.key === "\"") {
-            event.preventDefault();
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const value = this.value;
-            this.value = value.substring(0, start) + "\"\"" + value.substring(end);
-            this.selectionStart = this.selectionEnd = start + 1;
-        }
-
-        if (event.key === "'") {
-            event.preventDefault();
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const value = this.value;
-            this.value = value.substring(0, start) + "''" + value.substring(end);
-            this.selectionStart = this.selectionEnd = start + 1;
-        }
-
-        if (event.key === "(") {
-            event.preventDefault();
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            const value = this.value;
-            this.value = value.substring(0, start) + "()" + value.substring(end);
-            this.selectionStart = this.selectionEnd = start + 1;
-        }
-    });
 }
 
 function disableMenus(type) {
@@ -183,8 +135,21 @@ function loadFileContent(filePath) {
     document.getElementById("code").innerText = "Loading...";
     files.forEach(file => {
         if (file.path === filePath) {
-            document.getElementById("code").readOnly = !isOwner;
-            document.getElementById("code").value = file.content;     
+            document.getElementById("code").innerText = "";
+            editor = CodeMirror(document.getElementById("code"), {
+                mode: grabHighlightType(filePath),
+                lineNumbers: true,
+                readOnly: !isOwner,
+                value: file.content,
+                theme: "material"
+            });
+            editor.on("change", updateText);
+            editor.setSize("100%", "100%");
+
+            const fileDisplay = document.getElementById("fileDisplay");
+            fileDisplay.innerText = file.name;
+            fileDisplay.style.display = "flex";
+
         }
     });
 }
@@ -306,7 +271,7 @@ function ping() {
 
 function updateText() {
     if (!isOwner) return;
-    const code = document.getElementById("code").value;
+    const code = editor.getValue();
     for (let i = 0; i < files.length; i++) {
         if (files[i].path === currentFilePath) {
             files[i].content = code;
@@ -394,6 +359,18 @@ function grabImage(type) {
         "default" : "https://cdn-icons-png.flaticon.com/128/9496/9496401.png"};
     return icons[type] || icons["default"];
 
+}
+
+function grabHighlightType(path) {
+    const ext = path.split(".").pop();
+    const types = {
+        "c": "text/x-csrc",
+        "cpp": "text/x-c++src",
+        "java": "text/x-java",
+        "cs": "text/x-csharp",
+        "py": "python",
+        "js": "javascript"};
+    return types[ext] || "plaintext";
 }
 
 function addFile(type) {

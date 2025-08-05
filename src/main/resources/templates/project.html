@@ -5,12 +5,20 @@
         <title>Project</title>
         <link rel="stylesheet" type="text/css" href="project/style.css">
         <script src="project/script.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+        <script src=""></script>
     </head>
     <body>
         <div id="files"></div>
-        <textarea id="code" oninput="updateText()" readonly placeholder="Soon to be typed in..."></textarea>
+        <div id="code">No File currently loaded</div>
         <div id="top-bar">
             <button id="run" onclick="run()">Run</button>
+            <div id="fileDisplay">Current File</div>
         </div>
         <div id="console"></div>
 

@@ -144,7 +144,7 @@ function loadFileContent(filePath) {
                 theme: "material"
             });
             editor.on("change", updateText);
-            editor.setSize("100%", "100%");
+            editor.setSize("100%", "93%");
 
             const fileDisplay = document.getElementById("fileDisplay");
             fileDisplay.innerText = file.name;

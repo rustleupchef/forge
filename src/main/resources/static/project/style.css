@@ -8,6 +8,7 @@
     background: #2f3136;
     color: #fff;
     border-right: 1px solid #23272a;
+    overflow: scroll;
 }
 
 #code {
@@ -24,6 +25,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     padding: 16px;
     resize: none;
+    border: none;
 }
 
 #top-bar {
@@ -39,6 +41,7 @@
     color: #fff;
     border-bottom: 1px solid #2f3136;
     padding-left: 16px;
+    border: none;
 }
 
 #console {
@@ -53,16 +56,16 @@
     color: #b9bbbe;
     border-top: 1px solid #2f3136;
     padding: 8px;
-    overflow-y: auto;
+    overflow: scroll;
 }
 
 #fileDisplay {
     position: absolute;
     left: 1%;
-    bottom: 2%;
+    bottom: -3%;
     height: 30%;
     width: 10%;
-    background: #2f3136;
+    background: #23272a;
     border-radius: 5px;
     padding: 2px;
     color: #b9bbbe;
@@ -71,6 +74,7 @@
     align-items: center;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: none;
+    border: none;
 }
 
 .context-menu {

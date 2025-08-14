@@ -19,10 +19,8 @@
     height: 70%;
     font-family: monospace;
     font-size: 16px;
-    background: #23272a;
+    background: #2a2c31;
     color: #dcddde;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     padding: 16px;
     resize: none;
     border: none;
@@ -65,14 +63,13 @@
     bottom: -3%;
     height: 30%;
     width: 10%;
-    background: #23272a;
+    background: #2a2c31;
     border-radius: 5px;
     padding: 2px;
     color: #b9bbbe;
     font-size: 14px;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     display: none;
     border: none;
 }

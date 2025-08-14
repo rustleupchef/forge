@@ -375,11 +375,17 @@ public class ForgeController {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
-        if ((line = reader.readLine()) != null) {
-            return new Data(line + "\n", "running");
+        String text = "";
+        while (true) {
+            line = reader.readLine();
+            if (line == "" || line == null) break;
+            text += line + "\n";
         }
 
-        String text = "";
+        if (!text.isEmpty()) {
+            return new Data(text, "running");
+        }
+
         reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
         while ((line = reader.readLine()) != null) {
             text += line + "\n";

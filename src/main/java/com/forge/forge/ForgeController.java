@@ -360,9 +360,13 @@ public class ForgeController {
         if (session.getAttribute("process") != null) {
             Process oldProcess = (Process) session.getAttribute("process");
             oldProcess.destroy();
+            OutputStream oldOutputStream = (OutputStream) session.getAttribute("outputStream");
+            oldOutputStream.close();
         }
+        session.removeAttribute("outputStream");
         session.removeAttribute("process");
         session.setAttribute("process", process);
+        session.setAttribute("outputStream", process.getOutputStream());
         return 0;
     }
 
@@ -374,12 +378,12 @@ public class ForgeController {
         }
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
+        int token;
         String text = "";
         while (true) {
-            line = reader.readLine();
-            if (line == "" || line == null) break;
-            text += line + "\n";
+            token = reader.read();
+            if (token == -1) break;
+            text += (char)token;
         }
 
         if (!text.isEmpty()) {
@@ -387,8 +391,8 @@ public class ForgeController {
         }
 
         reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        while ((line = reader.readLine()) != null) {
-            text += line + "\n";
+        while ((token = reader.read()) != -1) {
+            text += (char) token;
         }
 
         if (!text.isEmpty()) {
@@ -396,8 +400,11 @@ public class ForgeController {
         }
 
         if (!process.isAlive()) {
+            OutputStream outputStream = (OutputStream) session.getAttribute("outputStream");
+            outputStream.close();
             process.destroy();
             session.removeAttribute("process");
+            session.removeAttribute("outputStream");
             return new Data("Process ended", "stopped");
         }
 
@@ -427,11 +434,9 @@ public class ForgeController {
             return 1;
         }
 
-        OutputStream outputStream = process.getOutputStream();
+        OutputStream outputStream = (OutputStream) session.getAttribute("outputStream");
         outputStream.write((command + "\n").getBytes());
         outputStream.flush();
-        outputStream.close();
-
         return 0;
 
     }

@@ -354,7 +354,8 @@ public class ForgeController {
         }
 
 
-        processBuilder.command("sudo", "docker", "run", "-i", "-m", "1024m", "--cpus", "0.8", "project-" + id + ":latest");
+        processBuilder.command("sudo", "docker", "run", "-i", "-m", "1024m", "--cpus", "0.8", "project-" + id + ":latest"); 
+        processBuilder.redirectErrorStream(true);
         process = processBuilder.start();
 
         if (session.getAttribute("process") != null) {
@@ -377,7 +378,7 @@ public class ForgeController {
             return new Data("Process ended", "stopped");
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        InputStreamReader reader = new InputStreamReader(process.getInputStream());
         int token;
         String text = "";
         while (true) {
@@ -388,15 +389,6 @@ public class ForgeController {
 
         if (!text.isEmpty()) {
             return new Data(text, "running");
-        }
-
-        reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-        while ((token = reader.read()) != -1) {
-            text += (char) token;
-        }
-
-        if (!text.isEmpty()) {
-            return new Data(text, "error");
         }
 
         if (!process.isAlive()) {

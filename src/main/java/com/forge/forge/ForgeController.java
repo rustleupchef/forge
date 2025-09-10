@@ -44,11 +44,13 @@ public class ForgeController {
 
     private final CustomerService customerService;
     private final ReposService reposService;
+    private final BackgroundProcessService backgroundProcessService;
 
     @Autowired
-    public ForgeController(CustomerService customerService, ReposService reposService) {
+    public ForgeController(CustomerService customerService, ReposService reposService, BackgroundProcessService backgroundProcessService) {
         this.reposService = reposService;
         this.customerService = customerService;
+        this.backgroundProcessService = backgroundProcessService;
     }
 
     @GetMapping("/home")
@@ -366,8 +368,13 @@ public class ForgeController {
         }
         session.removeAttribute("outputStream");
         session.removeAttribute("process");
+        session.removeAttribute("processOutput");
+        session.removeAttribute("index");
         session.setAttribute("process", process);
         session.setAttribute("outputStream", process.getOutputStream());
+        session.setAttribute("processOutput", "");
+        session.setAttribute("index", 0);
+        backgroundProcessService.pingProcessAsync(session);
         return 0;
     }
 
@@ -378,28 +385,29 @@ public class ForgeController {
             return new Data("Process ended", "stopped");
         }
 
-        InputStreamReader reader = new InputStreamReader(process.getInputStream());
-        int token;
-        String text = "";
-        while (true) {
-            token = reader.read();
-            if (token == -1) break;
-            text += (char)token;
-        }
-
-        if (!text.isEmpty()) {
-            return new Data(text, "running");
-        }
-
         if (!process.isAlive()) {
             OutputStream outputStream = (OutputStream) session.getAttribute("outputStream");
             outputStream.close();
             process.destroy();
             session.removeAttribute("process");
             session.removeAttribute("outputStream");
-            return new Data("Process ended", "stopped");
         }
 
+        String text = (String) session.getAttribute("processOutput");
+        int index = (int) session.getAttribute("index");
+        System.out.println(index);
+        text = text.substring(index);
+        System.out.println("Pinged: " + text);
+        if (!text.isEmpty()) {
+            System.out.println(text.length());
+            session.setAttribute("index", text.length());
+            return new Data(text.substring(index), "running");
+        }
+
+        if (!process.isAlive())
+            return new Data("Process ended", "stopped");
+
+        System.out.println("Running");
         return new Data("", "running");
     }
 

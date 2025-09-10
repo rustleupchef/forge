@@ -245,7 +245,10 @@ function ping() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             const response = JSON.parse(xhr.responseText);
             if (response.type === "running") {
-                document.getElementById("console").innerText += response.message;
+                if (response.message && response.message.length > 0) {
+                    document.getElementById("console").innerText += response.message;
+                    addConsoleInput();
+                }
             }
 
             if (response.type === "stopped") {

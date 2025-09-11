@@ -27,7 +27,7 @@ public class BackgroundProcessService {
             }
             int token;
             token = reader.read();
-            if (token == -1) break;
+            if (token == -1) continue;
     
             String existingOutput = (String) session.getAttribute("processOutput");
             if (existingOutput == null) {

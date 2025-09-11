@@ -196,7 +196,7 @@ function destroyConsoleInputs() {
 function addConsoleInput() {
     const consoleInput = document.createElement("input");
     consoleInput.type = "text";
-    consoleInput.placeholder = "Enter command";
+    consoleInput.placeholder = ">";
     consoleInput.className = "console-input";
     consoleInput.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {

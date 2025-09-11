@@ -395,11 +395,7 @@ public class ForgeController {
 
         String text = (String) session.getAttribute("processOutput");
         int index = (int) session.getAttribute("index");
-        System.out.println(index);
-        text = text.substring(index);
-        System.out.println("Pinged: " + text);
         if (!text.isEmpty()) {
-            System.out.println(text.length());
             session.setAttribute("index", text.length());
             return new Data(text.substring(index), "running");
         }

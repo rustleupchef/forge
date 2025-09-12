@@ -61,6 +61,11 @@ public class ForgeController {
         return "home";
     }
 
+    @GetMapping("/contactus")
+    public String contactUs() {
+        return "contact-us";
+    }
+
     @GetMapping("/")
     public String index() {
         return "redirect:/home";
@@ -84,7 +89,7 @@ public class ForgeController {
 
     @GetMapping("/about")
     public String about() {
-        return "redirect:/home";
+        return "about";
     }
 
     @GetMapping("/create-project")

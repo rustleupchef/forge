@@ -155,18 +155,10 @@ function loadFileContent(filePath) {
 }
 
 function closeFolder(file) {
-    inititalValue = file.hidden;    
-    const path = file.path;
-    for (let i = 0; i < files.length; i++) {
-        if (files[i].path.startsWith(path) && files[i].path !== path) {
-            files[i].hidden = !file.hidden;
-        }
-    }
-    if (inititalValue) file.hidden = false;
+    file.hidden = !file.hidden;
     const fileList = document.getElementById("files");
     fileList.replaceChildren();
     displayFiles(files);
-    if (!inititalValue) file.hidden = true;
 }
 
 function kill() {
@@ -313,9 +305,32 @@ function loadFiles () {
     xhr.send();
 }
 
-function displayFiles(files, fileList = document.getElementById("files")) {
+function isIn(files, path) {
+    for (let i = 0; i < files.length; i++) {
+        if (path.startsWith(files[i].path) && files[i].path !== path) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function filterForTopLevelFiles(files) {
+    let topLevelFiles = [];
     files.forEach(file => {
-        if (file.hidden) return;
+        if (file.hidden && !isIn(files, file.path)) {
+            topLevelFiles.push(file);
+        }
+    });
+    return topLevelFiles;
+}
+
+function displayFiles(files, fileList = document.getElementById("files")) {
+    const hiddenFiles = filterForTopLevelFiles(files.filter(file => file.hidden));
+
+    files.forEach(file => {
+        if (isIn(hiddenFiles, file.path)) {
+            return;
+        }
         const button = document.createElement("button");
         button.style.paddingLeft = (layer(file.path) * 20) + "px";
         button.innerHTML = (file.type === "directory" 

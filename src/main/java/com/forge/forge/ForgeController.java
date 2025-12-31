@@ -108,6 +108,9 @@ public class ForgeController {
         byte type,
         HttpSession session) throws IOException, InterruptedException {
         Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return;
+        }
         Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
         reposService.saveRepos(repo);
 
@@ -167,6 +170,9 @@ public class ForgeController {
     @PostMapping("/get-projects")
     @ResponseBody public List<Repos> getProjectsPost(HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return new ArrayList<Repos>();
+        }
         return reposService.findReposByOwner(customer.getEmail());
     }
 
@@ -260,6 +266,11 @@ public class ForgeController {
 
     @PostMapping("/project")
     @ResponseBody public List<ForgeFile> getProjectPost(Long id, HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail()))) {
+            return new ArrayList<ForgeFile>();
+        }
         List<ForgeFile> forgeFiles = new ArrayList<ForgeFile>();
         forgeFiles = getFilesFromDirectory(new File("projects/" + id + "/"), forgeFiles);
         return forgeFiles;
@@ -302,7 +313,14 @@ public class ForgeController {
     }
 
     @PostMapping("/delete-project")
-    @ResponseBody public int deleteProject(Long id) throws InterruptedException, IOException {
+    @ResponseBody public int deleteProject(Long id, HttpSession session) throws InterruptedException, IOException {
+
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
+
         File projectDir = new File("projects/" + id + "/");
         if (!projectDir.exists()) {
             return 1;
@@ -328,6 +346,12 @@ public class ForgeController {
 
     @PostMapping("/run")
     @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail()))) {
+            return 1;
+        }
+
         File projectDir = new File("projects/" + id + "/");
 
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -454,7 +478,12 @@ public class ForgeController {
 
 
     @PostMapping("/save")
-    @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files) throws IOException {
+    @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files, HttpSession session) throws IOException {
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
         for (ForgeFile forgeFile : files) {
             File file = new File(forgeFile.getPath());
             if (!file.isDirectory() && file.exists()) {
@@ -466,14 +495,38 @@ public class ForgeController {
         return 0;
     }
 
+    private Long getIdFromPath(String path) {
+        if (path == null || !path.startsWith("projects/"))
+            return null;
+        try {
+            String[] parts = path.split("/");
+            return Long.parseLong(parts[1]);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @PostMapping("/delete-file")
-    @ResponseBody public int deleteFile(@RequestBody ForgeFile file) {
+    @ResponseBody public int deleteFile(@RequestBody ForgeFile file, HttpSession session) {
+        Long id = getIdFromPath(file.getPath());
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
         delete(new File(file.getPath()));
         return 0;
     }
 
     @PostMapping("/add-file")
-    @ResponseBody public int addFile(String path, String fileName, String type) throws IOException {
+    @ResponseBody public int addFile(String path, String fileName, String type, HttpSession session) throws IOException {
+        Long id = getIdFromPath(path);
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
+
         if (type.equals("folder")) {
             File dir = new File(path + "/" + fileName);
             if (dir.exists())
@@ -495,7 +548,14 @@ public class ForgeController {
     }
 
     @PostMapping("/rename-file")
-    @ResponseBody public int renameFile(String path, String fileName) {
+    @ResponseBody public int renameFile(String path, String fileName, HttpSession session) {
+        Long id = getIdFromPath(path);
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
+
         File file = new File(path);
         File newFile = new File(file.getParent(), fileName);
         if (newFile.exists()) {

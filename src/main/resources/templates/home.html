@@ -8,18 +8,18 @@
         <link rel="stylesheet" href="home/style.css">
     </head>
     <body>
-        <img src="images/logo.png" alt="logo">
+        <img id="logo" src="images/logo.png" alt="logo">
+
         <div id="tabs">
             <button id="homeTab" class="tab" onclick="showTab('home')">Home</button>
             <button id="settingsTab" class="tab" onclick="showTab('settings')">Settings</button>
             <button id="learningTab" class="tab" onclick="showTab('contact-us')">Learning</button>
         </div>
 
-        <div id="Projects">
-            <div id="projectList">
-                <h3>No projects.</h3>
-            </div>
+        <div id="projects">
+            <h3>No projects.</h3>
         </div>
+
         <button id="createProjectButton" onclick="showTab('create-project')">Create New Project</button>
     </body>
 </html>

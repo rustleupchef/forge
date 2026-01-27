@@ -76,7 +76,7 @@ body {
     float: left;
     padding: 0;
     margin: 0;
-    margin-left: 40px;
+    margin-left: 20px;
     max-width: 35%;
     background-color: rgb(45, 45, 53);
     padding: 5px;
@@ -86,6 +86,11 @@ body {
     float: right;
     padding: 0;
     margin: 0;
-    margin-right: 40px;
-    max-width: 55%;;
+    margin-right: 20px;
+    max-width: 35%;
+}
+
+.project-box div p {
+    overflow-wrap: break-word;
+    font-size: calc(.5vh + .5vw);
 }

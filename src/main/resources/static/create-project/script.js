@@ -12,8 +12,15 @@ function submit() {
         "/create-project?name=" + name + 
         "&description=" + description + 
         "&isprivate=" + isPrivate +
-        "&type=" + type, false);
-    xhr.send();
+        "&type=" + type);
 
-    window.location.href = "/home";
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+            window.location.href = "/home";
+        } else {
+            console.error(xhr.statusText);
+        }
+    };
+    
+    xhr.send();
 }

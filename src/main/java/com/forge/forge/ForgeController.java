@@ -344,6 +344,19 @@ public class ForgeController {
         return 0;
     }
 
+    @PostMapping("/rename-project")
+    @ResponseBody public int renameProject(Long id, String name, HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        Repos repo = reposService.findReposById(id);
+        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+            return 1;
+        }
+
+        repo.setName(name);
+        reposService.updateRepos(repo);
+        return 0;
+    }
+
     @PostMapping("/run")
     @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
         Customer customer = (Customer) session.getAttribute("user");

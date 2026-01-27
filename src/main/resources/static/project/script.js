@@ -457,6 +457,15 @@ function deleteProject() {
     disableMenus("all");
 }
 
+function renameProject() {
+    const name = encodeURIComponent(prompt("Enter a new name for the project"));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/rename-project?" + id + "&name=" + name);
+    xhr.send();
+    disableMenus("all");
+}
+
 function layer(path) {
     return path.split("/").length - 3;
 }

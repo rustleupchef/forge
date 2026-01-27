@@ -466,6 +466,15 @@ function renameProject() {
     disableMenus("all");
 }
 
+function redescribeProject() {
+    const description = encodeURIComponent(prompt("Enter a new description for the project"));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/redescribe-project?" + id + "&description=" + description);
+    xhr.send();
+    disableMenus("all");
+}
+
 function layer(path) {
     return path.split("/").length - 3;
 }

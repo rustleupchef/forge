@@ -62,7 +62,10 @@ public class ForgeController {
     }
 
     @GetMapping("/contactus")
-    public String contactUs() {
+    public String contactUs(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         return "contact-us";
     }
 

@@ -1,6 +1,7 @@
 body {
-    font-family: 'Canva Sans', sans-serif;
+    font-family: 'Courier New', Courier, monospace;
     background-color: #36393f;
+    color: white;
 }
 
 img {
@@ -11,40 +12,48 @@ img {
     top: 1%;
 }
 
-button {
-    position: absolute;
-    top: 3%;
-    width: 10%;
-    height: 5%;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 3px;
-    background-color: #40444b;
-    color: #dcddde;
-    box-shadow: 0 2px 10px 0 rgba(0,0,0,.2);
-}
-
-input:focus {
-    outline: none;
-    border: 1px solid #7289da;
-}
-
-h4 {
-    position: absolute;
-    left: 35%;
-    top: 77.5%;
-    color: #b9bbbe;
-}
-
 a {
-    position: absolute;
-    right: 35%;
-    top: 80%;
-    color: #7289da;
-    text-decoration: none;
+    color: #5865f2;
 }
 
-a:hover {
-    text-decoration: underline;
+.body-container {
+    display: flex;
+    flex-direction: column;
+    height: 75vh;
+    float: left;
+    margin-top: 100px;
+    margin-left: 50px;
+    max-width: 40%;
+    font-size: 20px;
+}
+
+.form-container {
+    background-color: #2f3136;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 40%;
+    height: 75vh;
+    float:  right;
+    margin-top: 100px;
+    margin-right: 50px;
+}
+
+.form-container textarea {
+    padding: 20px;
+    max-width: 90%;
+    background-color: #36393f;
+    color: white;
+    border: none;
+}
+
+.form-container button {
+    background-color: #5865f2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    padding: 15px 30px;
 }

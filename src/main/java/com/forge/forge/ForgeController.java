@@ -69,6 +69,14 @@ public class ForgeController {
         return "contact-us";
     }
 
+    @GetMapping("settings")
+    public String settings(HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+        return "settings";
+    }
+
     @GetMapping("/")
     public String index() {
         return "redirect:/home";

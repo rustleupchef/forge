@@ -100,6 +100,19 @@ public class ForgeController {
         return "create-project";
     }
 
+    @PostMapping("/contact")
+    @ResponseBody public int contactPost(String message, HttpSession session) throws IOException, MessagingException {
+        System.out.println(message);
+        Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return 1;
+        }
+        String fullSubject = "Contact Us Message from " + customer.getName() + " (" + customer.getEmail() + ")";
+        String body = "Reply: to " + customer.getEmail() + "(" + customer.getName() + ")" + "\n\n" + message;
+        sendEmail(sEmail, fullSubject, body);
+        return 0;
+    }
+
     @PostMapping("/create-project")
     public void createProjectPost(
         String name,

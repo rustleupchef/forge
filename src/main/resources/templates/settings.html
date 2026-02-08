@@ -10,6 +10,35 @@
     <body>
         <img src="images/logo.png" alt="Logo">
 
-        
+        <div class="body-container">
+            <h1>Profile</h1>
+            <div class="field-container">
+                <h2>Name</h2>
+                <input id="name" type="text" disabled value="Name">
+                <button onclick="edit('name')">Edit</button>
+            </div>
+
+            <div class="field-container">
+                <h2>Email</h2>
+                <input id="email" type="text" disabled value="email">
+                <button onclick="edit('email')">Edit</button>
+            </div>
+
+            <div class="field-container">
+                <h2>Password</h2>
+                <input id="password" type="text" disabled value="email">
+                <button onclick="edit('password')">Edit</button>
+            </div>
+
+            
+            <button class="body-tool" onclick="logout()">Log Out</button>
+        </div>
+
+        <div class="overlay-box">
+            <div class="verification-box">
+                <input type="number" name="code" id="code">
+                <button onclick="confirmCode()">Confirm</button>
+            </div>
+        </div>
     </body>
 </html>

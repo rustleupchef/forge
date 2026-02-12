@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
 
-import jakarta.persistence.PostPersist;
 import jakarta.servlet.http.HttpSession;
 
 @Controller

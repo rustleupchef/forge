@@ -1,6 +1,7 @@
 package com.forge.forge;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
 
+import jakarta.persistence.PostPersist;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -219,6 +221,28 @@ public class ForgeController {
         customerService.saveCustomer(new Customer(username, email, Password.hash(password).withBcrypt().getResult()));
         return "OK";
     }
+
+    @PostMapping("/logout")
+    @ResponseBody public int logout(HttpSession session) throws IOException {
+        Enumeration<String> names = session.getAttributeNames();
+
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+
+            if (name.equals("outputStream")) {
+                OutputStream outputStream = (OutputStream) session.getAttribute(name);
+                outputStream.close();
+            }
+
+            if (name.equals("process")) {
+                Process process = (Process) session.getAttribute(name);
+                process.destroyForcibly();
+            }
+
+            session.removeAttribute(name);
+        }
+        return 0;
+    } 
 
     private void sendVerificationCode(String email, int code) throws IOException, MessagingException {
         String subject = "Verification Code";

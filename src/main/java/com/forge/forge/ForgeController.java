@@ -252,7 +252,31 @@ public class ForgeController {
         }
         return customer;
     }
-    
+
+    @PostMapping("/update-user")
+    @ResponseBody int updateUser(@RequestBody UserUpdate config, HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null || !Password.check(config.entered, customer.getPassword()).withBcrypt()) {
+            return 1;
+        }
+
+        int verificationCode = (int) session.getAttribute("verificationCode");
+        if (verificationCode != config.code) {
+            return 1;
+        }
+
+        config.password = !config.password.equals("") 
+            ? Password.hash(config.password).withBcrypt().getResult() 
+            : customer.getPassword();
+
+        customer.setEmail(config.email);
+        customer.setName(config.name);
+        customer.setPassword(config.password);
+
+        customerService.updateCustomer(customer);
+
+        return 0;
+    }
     @PostMapping("/send-verification-code")
     @ResponseBody public int sendCodePost(@RequestParam String email, HttpSession session) throws IOException, MessagingException {
         Customer customer = (Customer) session.getAttribute("user");

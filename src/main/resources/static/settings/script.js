@@ -95,9 +95,9 @@ function save() {
         return;
     }
 
-    const newName = encodeURIComponent(document.getElementById("name").value);
-    const newEmail = encodeURIComponent(document.getElementById("email").value);
-    const newPassword = encodeURIComponent(document.getElementById("password").value);
+    const newName = document.getElementById("name").value;
+    const newEmail = document.getElementById("email").value;
+    const newPassword = document.getElementById("password").value;
 
     const enteredPassword = prompt("Enter password:")
 
@@ -108,6 +108,6 @@ function save() {
             verificationCode = null;
         }
     }
-    xhr.send(JSON.stringify({ name: newName, email: newEmail, password: newPassword, entered: enteredPassword}));
+    xhr.send(JSON.stringify({ name: newName, email: newEmail, password: newPassword, entered: enteredPassword, code: verificationCode}));
 
 }

@@ -1,8 +1,9 @@
 package com.forge.forge;
 
 public class UserUpdate {
-    private String name;
-    private String email;
-    private String password;
-    private String entered;
+    public String name;
+    public String email;
+    public String password;
+    public String entered;
+    public int code;
 }

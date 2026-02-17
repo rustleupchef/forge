@@ -32,6 +32,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.password4j.Password;
@@ -241,7 +242,29 @@ public class ForgeController {
             session.removeAttribute(name);
         }
         return 0;
-    } 
+    }
+
+    @PostMapping("/grab-user")
+    @ResponseBody Customer grabCustomer(HttpSession session) {
+        Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return null;
+        }
+        return customer;
+    }
+    
+    @PostMapping("/send-verification-code")
+    @ResponseBody public int sendCodePost(@RequestParam String email, HttpSession session) throws IOException, MessagingException {
+        Customer customer = (Customer) session.getAttribute("user");
+        if (customer == null) {
+            return 1;
+        }
+
+        int num = new Random().nextInt(1000000, 9999999);
+        sendVerificationCode(email, num);
+        session.setAttribute("verificationCode", num);
+        return 0;
+    }
 
     private void sendVerificationCode(String email, int code) throws IOException, MessagingException {
         String subject = "Verification Code";

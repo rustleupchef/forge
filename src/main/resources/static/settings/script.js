@@ -1,4 +1,5 @@
 let verificationCode = null;
+let containProcess = false;
 
 window.onload = function() {
     const xhr = new XMLHttpRequest();
@@ -75,8 +76,11 @@ function confirmCode() {
     verificationCode = document.getElementById("code").value;
     const box = document.querySelector(".overlay-box");
     box.style.display = "none";
+    containProcess = true;
     setTimeout(() => {
-        verificationCode = null;
+        if (containProcess) {
+            verificationCode = null;
+        }
     }, 5 * 60 * 1000);
     save();
 }
@@ -106,6 +110,7 @@ function save() {
     xhr.onload = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             verificationCode = null;
+            containProcess = false;
         }
     }
     xhr.send(JSON.stringify({ name: newName, email: newEmail, password: newPassword, entered: enteredPassword, code: verificationCode}));

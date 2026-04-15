@@ -261,7 +261,9 @@ public class ForgeController {
         }
 
         int verificationCode = (int) session.getAttribute("verificationCode");
-        if (verificationCode != config.code) {
+        if (
+            verificationCode != config.code || 
+            ((long) session.getAttribute("verificationCodeTimeout")) - System.currentTimeMillis() > 5 * 60 * 1000) {
             return 1;
         }
 
@@ -277,6 +279,7 @@ public class ForgeController {
 
         return 0;
     }
+
     @PostMapping("/send-verification-code")
     @ResponseBody public int sendCodePost(@RequestParam String email, HttpSession session) throws IOException, MessagingException {
         Customer customer = (Customer) session.getAttribute("user");
@@ -287,6 +290,7 @@ public class ForgeController {
         int num = new Random().nextInt(1000000, 9999999);
         sendVerificationCode(email, num);
         session.setAttribute("verificationCode", num);
+        session.setAttribute("verrifcationCodeTimeout", System.currentTimeMillis());
         return 0;
     }
 

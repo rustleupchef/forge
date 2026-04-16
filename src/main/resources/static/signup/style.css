@@ -42,6 +42,10 @@ input, button {
     color: #dcddde;
 }
 
+button:disabled {
+    background-color: #2f3136;;
+}
+
 input:focus {
     outline: none;
     border: 1px solid #7289da;

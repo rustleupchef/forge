@@ -38,6 +38,8 @@ function signup() {
         alert("Invalid verification code");
         return;
     }
+
+    document.getElementById("submit").setAttribute("disabled", "disabled");
     xhr.open("POST", "/signup?email=" + email + "&username=" + username + "&password=" + password + "&verificationCode=" + verificationCode, true);
     xhr.onload = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
@@ -58,6 +60,7 @@ function signup() {
                 document.getElementById("verificationCode").removeAttribute("disabled");
                 document.getElementById("verificationCode").setAttribute("placeholder", "Enter verification code");
                 document.getElementById("verificationCode").setAttribute("required", true);
+                document.getElementById("submit").removeAttribute("disabled");
                 document.getElementById("submit").innerHTML = "Submit";
                 setTimeout(resetVerificationCode, 5 * 60 * 1000);
             }

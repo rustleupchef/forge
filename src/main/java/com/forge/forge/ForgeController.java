@@ -199,7 +199,7 @@ public class ForgeController {
         if (customer == null) {
             return new ArrayList<Repos>();
         }
-        return reposService.findReposByOwner(customer.getEmail());
+        return reposService.findReposByOwner(customer.getId());
     }
 
     @PostMapping("/signup")

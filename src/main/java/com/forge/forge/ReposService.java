@@ -18,7 +18,7 @@ public class ReposService {
         reposRepository.save(repos);
     }
 
-    public Repos findReposByNameAndOwner(String name, String owner) {
+    public Repos findReposByNameAndOwner(String name, Long owner) {
         return reposRepository.findByNameAndOwner(name, owner);
     }
 
@@ -38,7 +38,7 @@ public class ReposService {
         return reposRepository.findAll();
     }
 
-    public List<Repos> findReposByOwner(String owner) {
+    public List<Repos> findReposByOwner(Long owner) {
         return reposRepository.findByOwner(owner);
     }
 }

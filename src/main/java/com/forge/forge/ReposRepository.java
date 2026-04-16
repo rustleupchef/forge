@@ -12,9 +12,9 @@ public interface ReposRepository extends JpaRepository<Repos, Long> {
     @Query("SELECT r FROM Repos r WHERE r.name = :name AND r.owner = :owner")
     Repos findByNameAndOwner(
         @Param("name") String name,
-        @Param("owner") String owner);
+        @Param("owner") Long owner);
 
     @Query("SELECT r FROM Repos r WHERE r.owner = :owner")
     List<Repos> findByOwner(
-        @Param("owner") String owner);
+        @Param("owner") Long owner);
 }

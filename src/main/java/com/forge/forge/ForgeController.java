@@ -290,7 +290,7 @@ public class ForgeController {
         int num = new Random().nextInt(1000000, 9999999);
         sendVerificationCode(email, num);
         session.setAttribute("verificationCode", num);
-        session.setAttribute("verrifcationCodeTimeout", System.currentTimeMillis());
+        session.setAttribute("verificationCodeTimeout", System.currentTimeMillis());
         return 0;
     }
 

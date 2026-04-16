@@ -17,11 +17,11 @@ public class CustomerService {
     }
 
     public Customer findCustomerByEmail(String email) {
-        return customerRepository.findById(email).orElse(null);
+        return customerRepository.findByEmail(email).orElse(null);
     }
 
     public void deleteCustomer(String email) {
-        customerRepository.deleteById(email);
+        customerRepository.deleteByEmail(email);
     }
 
     public void updateCustomer(Customer customer) {

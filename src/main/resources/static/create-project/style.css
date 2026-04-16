@@ -72,6 +72,10 @@ textarea {
     float: right;
 }
 
+#submit:disabled {
+    background-color: #2f3136;;
+}
+
 #submit:hover {
     background-color: #677bc4;
 }

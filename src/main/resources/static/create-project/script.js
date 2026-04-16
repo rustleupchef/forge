@@ -1,4 +1,6 @@
 function submit() {
+    const submit = document.getElementById("submit");
+    
     const xhr = new XMLHttpRequest();
 
     const name = encodeURIComponent(document.getElementById("projectName").value);
@@ -14,11 +16,13 @@ function submit() {
         "&isprivate=" + isPrivate +
         "&type=" + type);
 
+    submit.setAttribute("disabled", "disabled");
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
             window.location.href = "/home";
         } else {
             console.error(xhr.statusText);
+            submit.removeAttribute("disabled");
         }
     };
     

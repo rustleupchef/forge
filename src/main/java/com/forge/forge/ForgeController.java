@@ -137,6 +137,11 @@ public class ForgeController {
         if (customer == null) {
             return;
         }
+
+        if (name.length() == 0 || description.length() == 0) {
+            return;
+        }
+
         Repos repo = new Repos(name, description, customer.getId(), isprivate, type);
         reposService.saveRepos(repo);
 

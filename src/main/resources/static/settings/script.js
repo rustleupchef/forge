@@ -68,6 +68,7 @@ function edit(name, element) {
 }
 
 function askForCode() {
+    alert("Sent a verification code");
     const box = document.querySelector(".overlay-box");
     box.style.display = "flex";
 }

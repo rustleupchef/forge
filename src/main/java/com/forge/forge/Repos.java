@@ -23,14 +23,14 @@ public class Repos {
     private Long id;
     private String name;
     private String description;
-    private String owner;
+    private Long owner;
     private boolean isPrivate;
     private byte type;
 
     public Repos() {
     }
 
-    public Repos(Long id, String name, String description, String owner, boolean isPrivate, byte type) {
+    public Repos(Long id, String name, String description, Long owner, boolean isPrivate, byte type) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -39,7 +39,7 @@ public class Repos {
         this.type = type;
     }
 
-    public Repos(String name, String description, String owner, boolean isPrivate, byte type) {
+    public Repos(String name, String description, Long owner, boolean isPrivate, byte type) {
         this.name = name;
         this.description = description;
         this.owner = owner;
@@ -71,11 +71,11 @@ public class Repos {
         this.description = description;
     }
 
-    public String getOwner() {
+    public Long getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner(Long owner) {
         this.owner = owner;
     }
 

@@ -137,7 +137,7 @@ public class ForgeController {
         if (customer == null) {
             return;
         }
-        Repos repo = new Repos(name, description, customer.getEmail(), isprivate, type);
+        Repos repo = new Repos(name, description, customer.getId(), isprivate, type);
         reposService.saveRepos(repo);
 
         String[] types = {"java", "python", "javascript", "cpp", "csharp", "c"};
@@ -355,7 +355,7 @@ public class ForgeController {
         }
 
         Customer customer = (Customer) session.getAttribute("user");
-        if (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail())) {
+        if (repo.isPrivate() && repo.getOwner() != customer.getId()) {
             return "redirect:/home";
         }
 
@@ -366,7 +366,7 @@ public class ForgeController {
     @ResponseBody public List<ForgeFile> getProjectPost(Long id, HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail()))) {
+        if (customer == null || (repo.isPrivate() && repo.getOwner() != customer.getId())) {
             return new ArrayList<ForgeFile>();
         }
         List<ForgeFile> forgeFiles = new ArrayList<ForgeFile>();
@@ -415,7 +415,7 @@ public class ForgeController {
 
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
 
@@ -446,7 +446,7 @@ public class ForgeController {
     @ResponseBody public int renameProject(Long id, String name, HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
 
@@ -459,7 +459,7 @@ public class ForgeController {
     @ResponseBody public int redescribeProject(Long id, String description, HttpSession session) {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
 
@@ -472,7 +472,7 @@ public class ForgeController {
     @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || (repo.isPrivate() && !repo.getOwner().equals(customer.getEmail()))) {
+        if (customer == null || (repo.isPrivate() && repo.getOwner() != customer.getId())) {
             return 1;
         }
 
@@ -572,7 +572,7 @@ public class ForgeController {
             return false;
         }
 
-        return repo.getOwner().equals(customer.getEmail());
+        return repo.getOwner() == customer.getId();
     }
 
     @PostMapping("/console-command")
@@ -605,7 +605,7 @@ public class ForgeController {
     @ResponseBody public int save(Long id, @RequestBody List<ForgeFile> files, HttpSession session) throws IOException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
         for (ForgeFile forgeFile : files) {
@@ -635,7 +635,7 @@ public class ForgeController {
         Long id = getIdFromPath(file.getPath());
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
         delete(new File(file.getPath()));
@@ -647,7 +647,7 @@ public class ForgeController {
         Long id = getIdFromPath(path);
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
 
@@ -676,7 +676,7 @@ public class ForgeController {
         Long id = getIdFromPath(path);
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
-        if (customer == null || repo == null || !repo.getOwner().equals(customer.getEmail())) {
+        if (customer == null || repo == null || repo.getOwner() != customer.getId()) {
             return 1;
         }
 

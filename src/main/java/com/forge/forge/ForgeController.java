@@ -276,11 +276,14 @@ public class ForgeController {
             return 1;
         }
 
-        int verificationCode = (int) session.getAttribute("verificationCode");
-        if (
-            verificationCode != config.code || 
-            ((long) session.getAttribute("verificationCodeTimeout")) - System.currentTimeMillis() > 5 * 60 * 1000) {
-            return 1;
+        String verificationCode = (String) session.getAttribute("verificationCode");
+
+        if (!verificationCode.equals(config.code)) {
+            return 2;
+        }
+
+        if (((long) session.getAttribute("verificationCodeTimeout")) - System.currentTimeMillis() > 5 * 60 * 1000) {
+            return 3;
         }
 
         config.password = !config.password.equals("") 
@@ -305,7 +308,7 @@ public class ForgeController {
 
         int num = new Random().nextInt(1000000, 9999999);
         sendVerificationCode(email, num);
-        session.setAttribute("verificationCode", num);
+        session.setAttribute("verificationCode", String.valueOf(num));
         session.setAttribute("verificationCodeTimeout", System.currentTimeMillis());
         return 0;
     }

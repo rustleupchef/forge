@@ -5,5 +5,5 @@ public class UserUpdate {
     public String email;
     public String password;
     public String entered;
-    public int code;
+    public String code;
 }

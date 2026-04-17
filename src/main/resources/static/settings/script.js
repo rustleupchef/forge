@@ -1,12 +1,11 @@
 let verificationCode = null;
-let containProcess = false;
+let propagatingElement = {name : null, element: null}
 
 window.onload = function() {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/grab-user");
     xhr.onload = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            console.log("testing");
             const customer = JSON.parse(xhr.responseText);
             const name = document.getElementById("name");
             const email = document.getElementById("email");
@@ -63,6 +62,9 @@ function edit(name, element) {
         
         
         element.innerText = "Edit";
+
+        propagatingElement.name = name;
+        propagatingElement.element = element;
         save();
     }
 }
@@ -77,18 +79,12 @@ function confirmCode() {
     verificationCode = document.getElementById("code").value;
     const box = document.querySelector(".overlay-box");
     box.style.display = "none";
-    containProcess = true;
-    setTimeout(() => {
-        if (containProcess) {
-            verificationCode = null;
-        }
-    }, 5 * 60 * 1000);
     save();
 }
 
 function save() {
     const xhr = new XMLHttpRequest();
-    if (verificationCode == null) {
+    if (!verificationCode) {
         const email = encodeURIComponent(document.getElementById("email").value);
         xhr.open("POST", "/send-verification-code?email=" + email);
         xhr.onload = function() {
@@ -110,8 +106,43 @@ function save() {
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onload = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
+
             verificationCode = null;
-            containProcess = false;
+            const inputBox = document.querySelector(".verification-box").querySelector("input");
+            inputBox.innerText = "";
+            inputBox.value = "";
+            let responseCode = parseInt(xhr.responseText);
+
+            if (responseCode === 1) {
+                alert("Incorrect Password");
+            } else if (responseCode === 2) {
+                alert("Incorrect Verification Code");
+            } else if (responseCode === 3) {
+                alert("Verification Code Timed Out");
+            }
+
+            if (responseCode !== 0) {
+                const element = propagatingElement.element;
+                const input = document.getElementById(propagatingElement.name);
+                const inputs = document.querySelectorAll('input[type="text"]');
+                inputs.forEach(i => {
+                    i.disabled = true;
+                    i.style.color = "gray";
+                });
+
+                const buttons = document.querySelectorAll('.edit-button');
+                buttons.forEach(i => {
+                    i.innerText = "Edit";
+                });
+
+                input.disabled = false;
+                input.style.color = "white";
+            
+                element.innerText = "Save";
+                return;
+            }
+
+            propagatingElement = {name: null, element: null}
         }
     }
     xhr.send(JSON.stringify({ name: newName, email: newEmail, password: newPassword, entered: enteredPassword, code: verificationCode}));

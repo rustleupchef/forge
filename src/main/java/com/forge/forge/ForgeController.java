@@ -212,15 +212,26 @@ public class ForgeController {
         String email,
         String username,
         String password,
-        String verificationCode) throws IOException, MessagingException {
+        String verificationCode,
+        HttpSession session) throws IOException, MessagingException {
         if (customerService.findCustomerByEmail(email) != null) {
             return "EMAIL_EXISTS";
         }
 
         if (verificationCode.equals("null") || verificationCode.isEmpty()) {
             int num = new Random().nextInt(1000000, 9999999);
+            session.setAttribute("verificationCode", String.valueOf(num));
+            session.setAttribute("verificationCodeTimeout", System.currentTimeMillis());
             sendVerificationCode(email, num);
-            return String.valueOf(num);
+            return "Verifciation Code Created";
+        }
+
+        if (!verificationCode.equals((String) session.getAttribute("verificationCode"))) {
+            return "Verification Code is Wrong";
+        }
+
+        if (System.currentTimeMillis() - ((long) session.getAttribute("verificationCodeTimeout")) >= 5 * 60 * 1000) {
+            return "Verification Code Timed Out";
         }
 
         customerService.saveCustomer(new Customer(username, email, Password.hash(password).withBcrypt().getResult()));

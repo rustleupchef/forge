@@ -1,7 +1,7 @@
-let verificationCode = null;
+let verificationCode = false;
 
 function resetVerificationCode() {
-    verificationCode = null;
+    verificationCode = false;
     document.getElementById("verificationCode").setAttribute("disabled", "disabled");
     document.getElementById("verificationCode").setAttribute("placeholder", "Verification code will be sent to your email");
     document.getElementById("verificationCode").setAttribute("required", "required");
@@ -22,6 +22,7 @@ function signup() {
         alert("Passwords do not match");
         return;
     }
+
     const email = encodeURIComponent(document.getElementById("email").value);
     if (email.length < 5 || !document.getElementById("email").value.includes("@")) {
         alert("Invalid email address");
@@ -33,16 +34,11 @@ function signup() {
         return;
     }
 
-    const enteredVerificationCode = encodeURIComponent(document.getElementById("verificationCode").value);
-    if (verificationCode !== enteredVerificationCode && verificationCode !== null) {
-        alert("Invalid verification code");
-        return;
-    }
-
     document.getElementById("submit").setAttribute("disabled", "disabled");
     xhr.open("POST", "/signup?email=" + email + "&username=" + username + "&password=" + password + "&verificationCode=" + verificationCode, true);
     xhr.onload = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
+            document.getElementById("submit").removeAttribute("disabled");
             console.log(xhr.responseText);
             if (xhr.responseText === "OK") {
                 alert("Signup successful");
@@ -53,6 +49,9 @@ function signup() {
             } else if (xhr.responseText === "") {
                 alert("Signup failed: No response from server");
                 resetVerificationCode();
+            } else if (xhr.responseText === "Verification Code Timed Out") {
+                alert(xhr.responseText);
+                resetVerificationCode();
             } else {
                 console.log(xhr.responseText);
                 verificationCode = xhr.responseText;
@@ -60,9 +59,7 @@ function signup() {
                 document.getElementById("verificationCode").removeAttribute("disabled");
                 document.getElementById("verificationCode").setAttribute("placeholder", "Enter verification code");
                 document.getElementById("verificationCode").setAttribute("required", true);
-                document.getElementById("submit").removeAttribute("disabled");
                 document.getElementById("submit").innerHTML = "Submit";
-                setTimeout(resetVerificationCode, 5 * 60 * 1000);
             }
         } else {
             alert("Signup failed: " + xhr.responseText);

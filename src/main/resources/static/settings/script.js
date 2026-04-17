@@ -84,7 +84,7 @@ function confirmCode() {
 
 function save() {
     const xhr = new XMLHttpRequest();
-    if (!verificationCode) {
+    if (verificationCode === null) {
         const email = encodeURIComponent(document.getElementById("email").value);
         xhr.open("POST", "/send-verification-code?email=" + email);
         xhr.onload = function() {

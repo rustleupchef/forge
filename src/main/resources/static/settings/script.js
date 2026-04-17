@@ -119,6 +119,8 @@ function save() {
                 alert("Incorrect Verification Code");
             } else if (responseCode === 3) {
                 alert("Verification Code Timed Out");
+            } else if (responseCode === 4) {
+                alert("Other user with this email already exists");
             }
 
             if (responseCode !== 0) {

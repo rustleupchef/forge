@@ -276,16 +276,22 @@ public class ForgeController {
             return 1;
         }
 
+        
         String verificationCode = (String) session.getAttribute("verificationCode");
-
+        
         if (!verificationCode.equals(config.code)) {
             return 2;
         }
-
+        
         if (((long) session.getAttribute("verificationCodeTimeout")) - System.currentTimeMillis() > 5 * 60 * 1000) {
             return 3;
         }
-
+        
+        Customer otherUser = customerService.findCustomerByEmail(config.email);
+        if (customer.getId() != otherUser.getId()) {
+            return 4;
+        }
+        
         config.password = !config.password.equals("") 
             ? Password.hash(config.password).withBcrypt().getResult() 
             : customer.getPassword();

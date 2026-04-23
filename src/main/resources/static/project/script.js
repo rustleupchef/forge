@@ -212,12 +212,15 @@ function run() {
         kill();
         return;
     }
+
+    document.getElementById("run").disabled = true;
     document.getElementById("console").innerText = "";
     save(false);
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/run?" + id);
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
+            document.getElementById("run").disabled = false;
             const data = JSON.parse(xhr.responseText);
 
             if (data.type === "error") {

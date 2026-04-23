@@ -218,6 +218,14 @@ function run() {
     xhr.open("POST", "/run?" + id);
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState === 4) {
+            const data = JSON.parse(xhr.responseText);
+
+            if (data.type === "error") {
+                document.getElementById("console").innerText += data.message;
+                destroyConsoleInputs();
+                return;
+            }
+
             isRunning = true;
             document.getElementById("run").innerText = "Stop";
             document.getElementById("run").className = "running-button";

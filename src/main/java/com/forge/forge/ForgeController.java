@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -20,6 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -494,11 +496,11 @@ public class ForgeController {
     }
 
     @PostMapping("/run")
-    @ResponseBody public int run(Long id, HttpSession session) throws IOException, InterruptedException {
+    @ResponseBody public Data run(Long id, HttpSession session) throws IOException, InterruptedException {
         Customer customer = (Customer) session.getAttribute("user");
         Repos repo = reposService.findReposById(id);
         if (customer == null || (repo.isPrivate() && repo.getOwner() != customer.getId())) {
-            return 1;
+            return new Data("Customer doesn't own this repo and repo is private", "error");
         }
 
         File projectDir = new File("projects/" + id + "/");
@@ -516,6 +518,25 @@ public class ForgeController {
             reader.close();
             process.destroy();
 
+            processBuilder.command("sudo", "docker", "rmi", "-f", "project-" + id + ":latest");
+            process = processBuilder.start();
+            process.waitFor();
+    
+            processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
+            process = processBuilder.start();
+
+            String errorOutput;
+            try (InputStream errorStream = process.getErrorStream();
+                BufferedReader _reader = new BufferedReader(new InputStreamReader(errorStream))) {
+                errorOutput = _reader.lines().collect(Collectors.joining("\n"));
+            }
+
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                return new Data(errorOutput, "error");
+            }
+
             processBuilder.command("git", "add", ".");
             process = processBuilder.start();
             process.waitFor();
@@ -524,13 +545,6 @@ public class ForgeController {
             process = processBuilder.start();
             process.waitFor();
 
-            processBuilder.command("sudo", "docker", "rmi", "-f", "project-" + id + ":latest");
-            process = processBuilder.start();
-            process.waitFor();
-    
-            processBuilder.command("sudo", "docker", "build", "-t", "project-" + id, ".");
-            process = processBuilder.start();
-            process.waitFor();
         }
 
 
@@ -553,7 +567,7 @@ public class ForgeController {
         session.setAttribute("processOutput", "");
         session.setAttribute("index", 0);
         backgroundProcessService.pingProcessAsync(session);
-        return 0;
+        return new Data("The Process worked succesfully", "success");
     }
 
     @PostMapping("/ping")

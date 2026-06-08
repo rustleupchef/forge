@@ -1,7 +1,5 @@
-let verificationCode = false;
 
 function resetVerificationCode() {
-    verificationCode = false;
     document.getElementById("verificationCode").setAttribute("disabled", "disabled");
     document.getElementById("verificationCode").setAttribute("placeholder", "Verification code will be sent to your email");
     document.getElementById("verificationCode").setAttribute("required", "required");
@@ -34,8 +32,10 @@ function signup() {
         return;
     }
 
+    const enteredCode = encodeURIComponent(document.getElementById("verificationCode").value);
+
     document.getElementById("submit").setAttribute("disabled", "disabled");
-    xhr.open("POST", "/signup?email=" + email + "&username=" + username + "&password=" + password + "&verificationCode=" + verificationCode, true);
+    xhr.open("POST", "/signup?email=" + email + "&username=" + username + "&password=" + password + "&verificationCode=" + enteredCode, true);
     xhr.onload = function () {
         if (xhr.status === 200 && xhr.readyState === 4) {
             document.getElementById("submit").removeAttribute("disabled");
@@ -54,7 +54,6 @@ function signup() {
                 resetVerificationCode();
             } else {
                 console.log(xhr.responseText);
-                verificationCode = xhr.responseText;
                 alert("Verification code sent to your email. Please enter it below.");
                 document.getElementById("verificationCode").removeAttribute("disabled");
                 document.getElementById("verificationCode").setAttribute("placeholder", "Enter verification code");
